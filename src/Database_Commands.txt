@@ -1,7 +1,0 @@
-Constructors:
-
-end
-Commands to run to update Database:
-
-end
-

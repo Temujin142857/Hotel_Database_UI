@@ -1,32 +1,31 @@
+package backend;
+
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+import global.*;
+import global.users.User;
 
 //is it better to make one connection that stays open the entire time database is valid
 //or open a new on every time a command needs to be sent? that seems secure but slow
 
 
 public class Database {
-    private final String[] sections= new String[]{"Constructors:","Commands to run to update Database:"};
+    private final String[] sections= new String[]{"Constructors:","Commands to run to update backend.Database:"};
     private Connection conn;//protecting it from garbage collection, maybe unnecisary
     private Statement st;
     private GuardDog goodBoy;
 
-    public Database(String databaseName, String user, String password){
+    public Database(String databaseName, String user, String password) throws SQLException {
         goodBoy=new GuardDog();
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        try {
-            conn = DriverManager.getConnection(databaseName, user, password);
-        } catch (SQLException e) {
-            System.out.println("connection failed");
-            e.printStackTrace();
-        }
+        conn = DriverManager.getConnection(databaseName, user, password);
 
         try {
             st = conn.createStatement();
@@ -35,6 +34,15 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    //code for views,
+    //CREATE VIEW view_name AS SELECT column1, column2, ... FROM table_name WHERE condition;
+    //first view is number of rooms availible per zone, define zone using address maybe
+    //CREATE VIEW roomsPerZone AS SELECT SUM(nombres_chambres) FROM hotel WHERE address LIKE %SpecifiedZone%
+    //specified zone is either a city name, country name, ect. basically any string that would be in address
+    //second view is the capacity per room, given a hotel
+    //CREATE VIEW capacityPerRoom AS SELECT * FROM room WHERE ID_hotel=givenID_hotel ORDER BY capacity
+    //returing a table of only capacity would be pretty useless, so I'll just organise it by capacity
 
     /**
      * voir les chambres disponibles en donnant des critères
@@ -50,22 +58,30 @@ public class Database {
      * @return
      */
     public Room[] getRooms(User USER, String dateStart, String dateEnd, String capacity, String superficie,
-                           String chain, String category, String hotelRooms, String priceUpper, String priceLower) throws Exception
+                           String chain, String category, String hotelRooms, String priceUpper, String priceLower, String toSort)
     {
-        //if not authorised throw exception, use try catch in ui to catch these errors and keep the program going
+        String sort = "ORDER BY ";
         String condition= "WHERE ";
-        if(dateStart!="idc"){condition+="";}
-        if(dateEnd!="idc"){condition+="";}
-        if(capacity!="idc"){condition+="AND capacity='"+capacity+"'";}
-        if(superficie!="idc"){condition+="AND superficie='"+superficie+"'";}
-        if(chain!="idc"){condition+="(SELECT nom_chain FROM hotel WHERE hotel.ID_hotel=ID_hotel AND nom_chain ='"+chain+"')";}
-        if(category!="idc"){condition+="AND (SELECT category FROM hotel WHERE hotel.ID_hotel=ID_hotel AND category ='"+category+"')";}
-        if(hotelRooms!="idc"){condition+="AND (SELECT hotelRooms FROM hotel WHERE hotel.ID_hotel=ID_hotel AND hotelRooms='"+hotelRooms+"')";}
-        if(priceUpper!="idc"){condition+="AND prix<='"+priceUpper+"'";}
-        if(priceLower!="idc"){condition+="AND prix>='"+priceLower+"'";}
+        if(!dateStart.equals("idc")){condition+="";}
+        if(!dateEnd.equals("idc")){condition+="";}
+        if(!capacity.equals("idc")){condition+="AND capacity='"+capacity+"'";}
+        if(!superficie.equals("idc")){condition+="AND superficie='"+superficie+"'";}
+        if(!chain.equals("idc")){condition+="(SELECT nom_chain FROM hotel WHERE hotel.ID_hotel=ID_hotel AND nom_chain ='"+chain+"')";}
+        if(!category.equals("idc")){condition+="AND (SELECT category FROM hotel WHERE hotel.ID_hotel=ID_hotel AND category ='"+category+"')";}
+        if(!hotelRooms.equals("idc")){condition+="AND (SELECT hotelRooms FROM hotel WHERE hotel.ID_hotel=ID_hotel AND hotelRooms='"+hotelRooms+"')";}
+        if(!priceUpper.equals("idc")){condition+="AND prix<='"+priceUpper+"'";}
+        if(!priceLower.equals("idc")){condition+="AND prix>='"+priceLower+"'";}
         if(condition.equals("WHERE ")){condition="";}
-        String request="SELECT * FROM chambre "+condition;
+
+        if(toSort.equals("idc")){sort="";}
+        else {sort+=toSort;}
+
+        String request="SELECT * FROM chambre "+condition+sort;
         return executeRequestRooms(request);
+    }
+
+    public Room[] getRooms(User USER, HashMap<String,String> c,String toSort){
+        return getRooms(USER,c.get("dateStart"),c.get("dateEnd"),c.get("capacity"),c.get("superficie"),c.get("chain"),c.get("category"),c.get("hotelRooms"),c.get("priceUpper"),c.get("priceLower"),toSort);
     }
 
     /**
@@ -76,20 +92,23 @@ public class Database {
      * @param USER user credentials, used to control access
      * @return
      */
-    public boolean updateInfo(User USER, String newInfo, String table,String Condition){
-        //check user security
+    public void updateInfo(User USER, String newInfo, String table, String Condition) throws UnauthorisedAccessException {
+        if(!USER.getAccessLevel().equals("EMPLOYEE")){
+            throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
+        }
         String withCondition="WHERE "+Condition;
         if(Condition.equals("no")){withCondition="";}
         executeCommand("UPDATE "+table+ "SET"+newInfo+withCondition);
-        return false;
     }
 
 
 
-    public boolean insertInfo(User USER, String newInfo, String table){
-        //check user allowances
+    public void insertInfo(User USER, String newInfo, String table) throws UnauthorisedAccessException {
+        if(!USER.getAccessLevel().equals("EMPLOYEE")){
+            throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
+        }
         executeCommand("INSERT INTO "+table+ "VALUES ("+newInfo+")");
-        return false;
+
     }
 
 
@@ -115,7 +134,12 @@ public class Database {
     }
 
 
-    public void autoUpdate(){
+
+
+    public void autoUpdate(User USER) throws UnauthorisedAccessException {
+        if(!USER.getAccessLevel().equals("EMPLOYEE")){
+            throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
+        }
         for (String section: sections) {
             try {
                 runSectionOfCommands(section);
@@ -132,7 +156,7 @@ public class Database {
      */
     private void runSectionOfCommands(String section) throws FileNotFoundException {
         boolean read=false;
-        File commandFile= new File("Database_Commands.txt");
+        File commandFile= new File("backend/Database_Commands.txt");
         Scanner scanner=new Scanner(commandFile);
         int i=0;
         while(scanner.hasNext()) {
