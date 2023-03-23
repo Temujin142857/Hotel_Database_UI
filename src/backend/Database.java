@@ -76,7 +76,7 @@ public class Database {
         if(toSort.equals("idc")){sort="";}
         else {sort+=toSort;}
 
-        String request="SELECT * FROM chambre "+condition+sort;
+        String request="SELECT * FROM chambre "+condition+sort+";";
         return executeRequestRooms(request);
     }
 
@@ -98,20 +98,93 @@ public class Database {
         }
         String withCondition="WHERE "+Condition;
         if(Condition.equals("no")){withCondition="";}
-        executeCommand("UPDATE "+table+ "SET"+newInfo+withCondition);
+        executeCommand("UPDATE "+table+ "SET"+newInfo+withCondition+";");
     }
 
 
 
-    public void insertInfo(User USER, String newInfo, String table) throws UnauthorisedAccessException {
-        if(!USER.getAccessLevel().equals("EMPLOYEE")){
+    public void insertInfo(User USER, String[] values, String[] columns, String table) throws UnauthorisedAccessException {
+        if(USER.getAccessLevel().equals("CLIENT")&&!table.equals("reservation")){
             throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
         }
-        executeCommand("INSERT INTO "+table+ "VALUES ("+newInfo+")");
+        String sqlColumns=" (";
+        String sqlValues="(";
+        for (int i = 0; i < columns.length; i++) {
+            sqlColumns+=columns[i];
+            sqlValues+="'"+values[i]+"'";
+            if (i!=columns.length-1){sqlColumns+=", ";sqlValues+=", ";}
+
+        }
+        sqlColumns+=")";
+        sqlValues+=")";
+        executeCommand("INSERT INTO "+table+sqlColumns+ " VALUES "+sqlValues+";");
 
     }
 
+    public int getCurrentRentalID(){
+        ResultSet result= null;
+        try {
+            result = st.executeQuery("SELECT Max(ID_location) FROM Location AS current_ID;");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        while (true){
+            try {
+                if (!result.next()) break;
+                return result.getInt(1);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return -2;
+    }
 
+    public int getCurrentReservationID(){
+        ResultSet result= null;
+        try {
+            result = st.executeQuery("SELECT Max(ID_reservation) FROM Reservation AS current_ID;");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        while (true){
+            try {
+                if (!result.next()) break;
+                return result.getInt(1);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public HashMap<String,String> getReservation(User user, int reservationID)throws InvalidIDException{
+        HashMap<String,String> reservation=new HashMap<>();
+        ResultSet result=null;
+        try {
+            result= st.executeQuery("SELECT * FROM Reservation WHERE ID_reservation='"+reservationID+"';");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            int i=1;
+            ResultSetMetaData resultData=result.getMetaData();
+            int columnNum=resultData.getColumnCount();
+
+            if(result.next()){
+                while(i<columnNum) {
+                    reservation.put(resultData.getColumnName(i), String.valueOf(result.getObject(i + 1)));
+                    //this might have an error, since I'm not sure what string value of will return here
+                    //in theory each object is an int or string, but it might not realise that and use a special
+                    //object method giving me an address or random string
+                    //also not sure how safe get columnName is
+                    i++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservation;
+    }
 
     private void executeCommand(String command){
         //something something security checks
@@ -132,7 +205,6 @@ public class Database {
 
         return rooms.toArray(new Room[]{});
     }
-
 
 
 
