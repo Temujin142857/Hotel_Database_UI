@@ -27,16 +27,16 @@ FOR EACH ROW
 BEGIN
 SELECT MAX(ID_Reservation) AS nextID
 FROM Reservation;
-INSERT INTO Reservation(,old_salary,new_salary)
-    VALUES(NEW.employee_id,OLD.salary,NEW.salary);
+INSERT INTO Reservation(ID_reservation, NAS_client, ID_chambre, Date_start, Date_end)
+    VALUES(NEW.ID_reservation, NEW.NAS_client, NEW.ID_chambre, NEW.Date_start, NEW.Date_end);
 END;
 
 CREATE TRIGGER name1
 BEFORE UPDATE ON Location
 FOR EACH ROW
 BEGIN
-UPDATE salary_changes(employee_id,old_salary,new_salary)
-    SET
+UPDATE Reservation(ID_reservation, NAS_client, ID_chambre, Date_start, Date_end)
+    SET ID_reservation=NEW.ID_reservation,NAS_client=NEW.NAS_client, ID_chambre=NEW.ID_chambre, Date_start=NEW.Date_start, Date_end=NEW.Date_end
     WHERE NEW.ID_Reservation=ID_Reservation;
 END;
 
