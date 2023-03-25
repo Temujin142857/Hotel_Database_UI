@@ -11,6 +11,14 @@ ALTER TABLE IF EXISTS "DBproject"."Employé" OWNER to postgres;
 CREATE TABLE IF NOT EXISTS "DBproject"."Reservation" ( "ID_reservation" integer NOT NULL, "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, "NAS_client" character(9) COLLATE pg_catalog."default", status_paiement boolean, CONSTRAINT "Reservation_pkey" PRIMARY KEY ("ID_reservation") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Reservation" OWNER to postgres;
 
+CREATE TABLE IF NOT EXISTS "DBproject"."Location" ( "ID_location" integer NOT NULL, "NAS_employé" character(9) COLLATE pg_catalog."default", "NAS_client" character(9) COLLATE pg_catalog."default", "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, CONSTRAINT "Location_pkey" PRIMARY KEY ("ID_location") ) TABLESPACE pg_default;
+ALTER TABLE IF EXISTS "DBproject"."Location" OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS "DBproject"."Client" ( "NAS_client" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "date_enregistré" date, adresse character varying COLLATE pg_catalog."default", CONSTRAINT "Client_pkey" PRIMARY KEY ("NAS_client") ) TABLESPACE pg_default;
+ALTER TABLE IF EXISTS "DBproject"."Client" OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, "ID_hotel" integer, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
+ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
 
 end
 Commands to run to update backend.Database:
