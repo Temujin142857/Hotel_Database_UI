@@ -44,8 +44,31 @@ SELECT COUNT Chambre
 FROM Hotel
 WHERE Adresse LIKE %cityname%;
 
-Indexes:
+CREATE VIEW capacityOfHotel AS
+SELECT Capacity
+FROM ROOM
+WHERE ID_hotel=GIVEN_ID_hotel
 
+Indexes:
+CREATE INDEX idx_roomByHotel
+ON Chambre (ID_hotel);
+
+CREATE INDEX idx_RentalByDate
+ON Location (date_start,date_end);
+
+CREATE INDEX idx_RentalByRoom
+ON Location (ID_Chambre);
+
+CREATE INDEX idx_ReservationByDate
+ON Reservation (date_start,date_end);
+
+CREATE INDEX idx_ReservationByRoom
+ON Reservation (ID_Chambre);
+
+CREATE INDEX idx_hotelByAddress
+ON Hotel (Addresse)
+
+CREATE INDEX idx_
 
 break
 Commands to run to update backend.Database:

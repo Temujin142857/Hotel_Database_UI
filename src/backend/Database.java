@@ -228,7 +228,7 @@ public class Database {
      */
     private void runSectionOfCommands(String section) throws FileNotFoundException {
         boolean read=false;
-        File commandFile= new File("backend/Database_Commands.txt");
+        File commandFile= new File("Hotel_Database_UI/SRC/backend/Database_Commands.txt");
         Scanner scanner=new Scanner(commandFile);
         int i=0;
         while(scanner.hasNext()) {
