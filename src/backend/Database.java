@@ -25,7 +25,8 @@ public class Database {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        conn = DriverManager.getConnection(databaseName, user, password);
+        String url="jdbc:postgresql://localhost:5432/"+databaseName;
+        conn = DriverManager.getConnection(url, user, password);
 
         try {
             st = conn.createStatement();

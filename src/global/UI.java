@@ -47,27 +47,6 @@ public class UI {
     }
 
     /**
-     * kind of an overloaded method for makeListOfRooms
-     * takes a hashmop of String to any type, since some values in Room are int and such
-     * sortBy is the column you want the list to be sorted by, any value that isn't actually a column is converted to a don't care
-     * so you can just put no, or idc, or anything if you don't want it sorted
-     * I can overload it to take any parameters you might need
-     * @param conditions
-     * @param sortBy
-     * @return
-     */
-    public Room[] getListOfRooms(HashMap<String, Type> conditions, String sortBy){
-        HashMap<String,String> stringMap=new HashMap<>();
-        if(!conditions.isEmpty()){
-            for (String condition:conditions.keySet()) {
-                stringMap.put(condition,String.valueOf(conditions.get(condition)));
-            }
-        }
-        return makeListOfRooms(stringMap,sortBy);
-    }
-
-
-    /**
      * takes a hashmap whose keys are the columns you wish to include
      * and the values are the associated values
      * returns the reservation ID of the newly created ID
@@ -144,8 +123,6 @@ public class UI {
         return reservationID;
     }
 
-
-
     /**
      * will return a list of rooms to be displayed, filtered by the conditions and sorted by the sortBy
      * still needs to check that the conditions are valid
@@ -166,6 +143,26 @@ public class UI {
         }
         if(possibleConditions.contains(sortBy)){toSort=sortBy;}
         return database.getRooms(user,fullConditions,toSort);
+    }
+
+    /**
+     * kind of an overload method for makeListOfRooms
+     * takes a hashmop of String to any type, since some values in Room are int and such
+     * sortBy is the column you want the list to be sorted by, any value that isn't actually a column is converted to a don't care
+     * so you can just put no, or idc, or anything if you don't want it sorted
+     * I can overload it to take any parameters you might need
+     * @param conditions
+     * @param sortBy
+     * @return
+     */
+    public Room[] getListOfRooms(HashMap<String, Type> conditions, String sortBy){
+        HashMap<String,String> stringMap=new HashMap<>();
+        if(!conditions.isEmpty()){
+            for (String condition:conditions.keySet()) {
+                stringMap.put(condition,String.valueOf(conditions.get(condition)));
+            }
+        }
+        return makeListOfRooms(stringMap,sortBy);
     }
 
 

@@ -25,7 +25,9 @@ CREATE TRIGGER name1
 BEFORE INSERT ON Location
 FOR EACH ROW
 BEGIN
-INSERT INTO salary_changes(employee_id,old_salary,new_salary)
+SELECT MAX(ID_Reservation) AS nextID
+FROM Reservation;
+INSERT INTO Reservation(,old_salary,new_salary)
     VALUES(NEW.employee_id,OLD.salary,NEW.salary);
 END;
 
@@ -68,7 +70,7 @@ ON Reservation (ID_Chambre);
 CREATE INDEX idx_hotelByAddress
 ON Hotel (Addresse)
 
-CREATE INDEX idx_
+
 
 break
 Commands to run to update backend.Database:
