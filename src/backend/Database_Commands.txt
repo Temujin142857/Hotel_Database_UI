@@ -20,8 +20,36 @@ ALTER TABLE IF EXISTS "DBproject"."Client" OWNER to postgres;
 CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, "ID_hotel" integer, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
 
-end
+triggers:
+CREATE TRIGGER name1
+BEFORE INSERT ON Location
+FOR EACH ROW
+BEGIN
+INSERT INTO salary_changes(employee_id,old_salary,new_salary)
+    VALUES(NEW.employee_id,OLD.salary,NEW.salary);
+END;
+
+CREATE TRIGGER name1
+BEFORE UPDATE ON Location
+FOR EACH ROW
+BEGIN
+UPDATE salary_changes(employee_id,old_salary,new_salary)
+    SET
+    WHERE NEW.ID_Reservation=ID_Reservation;
+END;
+
+Views:
+CREATE VIEW numOfRoomsByZone AS
+SELECT COUNT Chambre
+FROM Hotel
+WHERE Adresse LIKE %cityname%;
+
+Indexes:
+
+
+break
 Commands to run to update backend.Database:
 
-end
+
+break
 

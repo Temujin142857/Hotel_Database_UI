@@ -209,7 +209,7 @@ public class Database {
 
 
     public void autoUpdate(User USER) throws UnauthorisedAccessException {
-        if(!USER.getAccessLevel().equals("EMPLOYEE")){
+        if(!USER.getAccessLevel().equals("ADMIN")){
             throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
         }
         for (String section: sections) {
@@ -232,15 +232,16 @@ public class Database {
         Scanner scanner=new Scanner(commandFile);
         int i=0;
         while(scanner.hasNext()) {
-            if (scanner.nextLine().equals(section)) {
+            String line= scanner.nextLine();
+            if (line.equals(section)) {
                 read = true;
-            } else if (scanner.nextLine().equals("end")) {
+            } else if (line.equals("break")) {
                 read = false;
             }
             if (read) {
                 i++;
                 try {
-                    st.executeUpdate(scanner.nextLine());
+                    st.executeUpdate(line);
                 } catch (SQLException e) {
                     System.out.println("invalid command, at command#" + i);
                     e.printStackTrace();
