@@ -61,18 +61,18 @@ public class Database {
     public Room[] getRooms(User USER, String dateStart, String dateEnd, String capacity, String superficie,
                            String chain, String category, String hotelRooms, String priceUpper, String priceLower, String toSort)
     {
-        String sort = "ORDER BY ";
+        //SELECT * FROM Chambre where Chambre.ID = Select chambre.id From Reservation where
+        String sort = " ORDER BY ";
         String condition= "WHERE ";
-        if(!dateStart.equals("idc")){condition+="AND ";}
-        if(!dateEnd.equals("idc")){condition+="AND (SELECT date_end";}
-        if(!capacity.equals("idc")){condition+="AND capacity='"+capacity+"'";}
-        if(!superficie.equals("idc")){condition+="AND superficie='"+superficie+"'";}
-        if(!chain.equals("idc")){condition+="AND ('"+chain+"'=SELECT nom_chain FROM hotel WHERE hotel.ID_hotel=ID_hotel)";}
-        if(!category.equals("idc")){condition+="AND ('"+category+"'=SELECT category FROM hotel WHERE hotel.ID_hotel=ID_hotel)";}
-        if(!hotelRooms.equals("idc")){condition+="AND ('"+hotelRooms+"'=SELECT hotelRooms FROM hotel WHERE hotel.ID_hotel=ID_hotel";}
-        if(!priceUpper.equals("idc")){condition+="AND prix<='"+priceUpper+"'";}
-        if(!priceLower.equals("idc")){condition+="AND prix>='"+priceLower+"'";}
-        if(condition.equals("WHERE ")){condition="";}
+        if(!dateStart.equals("idc")&&!dateEnd.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="(ID_Chambre = SELECT ID_Chambre FROM Reservation WHERE NOT EXISTS (SELECT ID_Chambre FROM Reservation WHERE ((date_end < '"+dateEnd+"' AND date_end>'"+dateStart+"')OR (date_start<'"+dateEnd+"' AND date_start>'"+dateStart+"'))";}
+        if(!capacity.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="capacity='"+capacity+"'";}
+        if(!superficie.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="superficie='"+superficie+"'";}
+        if(!chain.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="(ID_hotel=SELECT ID_hotel FROM hotel WHERE nom_chain='"+chain+"')";}
+        if(!category.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="(ID_hotel=SELECT ID_hotel FROM hotel WHERE category='"+category+"')";}
+        if(!hotelRooms.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="(ID_hotel=SELECT ID_hotel FROM hotel WHERE nombre_chambre='"+hotelRooms+"')";}
+        if(!priceUpper.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="prix<='"+priceUpper+"'";}
+        if(!priceLower.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="prix>='"+priceLower+"'";}
+        else if(condition.equals("WHERE ")){condition="";}
 
         if(toSort.equals("idc")){sort="";}
         else {sort+=toSort;}
