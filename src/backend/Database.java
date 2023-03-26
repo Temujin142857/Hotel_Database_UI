@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import global.*;
 import global.users.User;
+import org.apache.commons.lang3.StringUtils;
 
 //is it better to make one connection that stays open the entire time database is valid
 //or open a new on every time a command needs to be sent? that seems secure but slow
@@ -232,8 +233,10 @@ public class Database {
         File commandFile= new File("Hotel_Database_UI/SRC/backend/Database_Commands.txt");
         Scanner scanner=new Scanner(commandFile);
         int i=0;
+        String line;
+        String nLine;
         while(scanner.hasNext()) {
-            String line= scanner.nextLine();
+            line= scanner.nextLine();
             if (line.equals(section)) {
                 read = true;
             } else if (line.equals("break")) {
@@ -241,6 +244,22 @@ public class Database {
             }
             if (read) {
                 i++;
+                while(!line.contains(";")){
+                    line+= scanner.nextLine();
+                }
+                if(line.contains("BEGIN")){
+                    while(true){
+                        nLine=scanner.nextLine();
+                        line+= " "+nLine;
+                        if(nLine.equals("END;")){break;}
+                    }
+                }
+                if(line.contains("$")){
+                    while(StringUtils.countMatches(line,'$')!=4){
+                        nLine=scanner.nextLine();
+                        line+= " "+nLine;
+                    }
+                }
                 try {
                     st.executeUpdate(line);
                 } catch (SQLException e) {

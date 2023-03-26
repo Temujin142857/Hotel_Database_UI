@@ -1,4 +1,7 @@
 Constructors:
+
+CREATE SCHEMA IF NOT EXISTS "DBproject" AUTHORIZATION postgres;
+
 CREATE TABLE IF NOT EXISTS "DBproject"."Chaine"(nom_chaine character varying COLLATE pg_catalog."default" NOT NULL,adresse character varying COLLATE pg_catalog."default",nombre_hotels integer,hotel_emails character varying COLLATE pg_catalog."default",hotel_phones character varying COLLATE pg_catalog."default",CONSTRAINT "Chaine_pkey" PRIMARY KEY (nom_chaine))TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chaine" OWNER to postgres;
 
@@ -19,6 +22,68 @@ ALTER TABLE IF EXISTS "DBproject"."Client" OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, "ID_hotel" integer, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
+
+
+CREATE  OR REPLACE FUNCTION sync_reservation_rentalF
+    RETURNS TRIGGER
+    LANGUAGE SQL
+    AS $BODY$
+
+BEGIN
+    SELECT COUNT(ID_reservation) AS num FROM Reservation WHERE ID_reservation = NEW.ID_Reservation;
+    IF num=0 THEN
+        SELECT MAX(ID_Reservation) AS nextID FROM Reservation;
+        INSERT INTO Reservation(ID_reservation, NAS_client, ID_chambre, Date_start, Date_end)
+            VALUES(NEW.ID_reservation, NEW.NAS_client, NEW.ID_chambre, NEW.Date_start, NEW.Date_end);
+    END IF;
+END;
+$BODY$
+
+
+CREATE TRIGGER sync_reservation_rental
+    BEFORE INSERT
+    ON Location
+    FOR EACH ROW
+    EXECUTE PROCEDURE sync_reservation_rentalF();
+
+CREATE TRIGGER name1
+BEFORE UPDATE ON Location
+FOR EACH ROW
+BEGIN
+UPDATE Reservation(ID_reservation, NAS_client, ID_chambre, Date_start, Date_end)
+   SET ID_reservation=NEW.ID_reservation,NAS_client=NEW.NAS_client, ID_chambre=NEW.ID_chambre, Date_start=NEW.Date_start, Date_end=NEW.Date_end
+   WHERE NEW.ID_Reservation=ID_Reservation;
+END;
+
+Views:
+CREATE VIEW numOfRoomsByZone AS
+SELECT COUNT Chambre
+FROM Hotel
+WHERE Adresse LIKE %cityname%;
+
+CREATE VIEW capacityOfHotel AS
+SELECT Capacity
+FROM ROOM
+WHERE ID_hotel=GIVEN_ID_hotel
+
+Indexes:
+CREATE INDEX idx_roomByHotel
+ON Chambre (ID_hotel);
+
+CREATE INDEX idx_RentalByDate
+ON Location (date_start,date_end);
+
+CREATE INDEX idx_RentalByRoom
+ON Location (ID_Chambre);
+
+CREATE INDEX idx_ReservationByDate
+ON Reservation (date_start,date_end);
+
+CREATE INDEX idx_ReservationByRoom
+ON Reservation (ID_Chambre);
+
+CREATE INDEX idx_hotelByAddress
+ON Hotel (Addresse)
 
 
 break
