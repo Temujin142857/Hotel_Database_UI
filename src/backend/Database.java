@@ -31,7 +31,7 @@ public class Database {
         try {
             st = conn.createStatement();
         } catch (SQLException e) {
-            System.out.println("if you're reading this we're screw cause idk why this would throw and error");
+            System.out.println("if you're reading this we're screwed cause idk why this would throw and error");
             e.printStackTrace();
         }
     }
@@ -43,7 +43,7 @@ public class Database {
     //specified zone is either a city name, country name, ect. basically any string that would be in address
     //second view is the capacity per room, given a hotel
     //CREATE VIEW capacityPerRoom AS SELECT * FROM room WHERE ID_hotel=givenID_hotel ORDER BY capacity
-    //returing a table of only capacity would be pretty useless, so I'll just organise it by capacity
+    //returning a table of only capacity would be pretty useless, so I'll just organise it by capacity
 
     /**
      * voir les chambres disponibles en donnant des critères
@@ -63,13 +63,13 @@ public class Database {
     {
         String sort = "ORDER BY ";
         String condition= "WHERE ";
-        if(!dateStart.equals("idc")){condition+="";}
-        if(!dateEnd.equals("idc")){condition+="";}
+        if(!dateStart.equals("idc")){condition+="AND ";}
+        if(!dateEnd.equals("idc")){condition+="AND (SELECT date_end";}
         if(!capacity.equals("idc")){condition+="AND capacity='"+capacity+"'";}
         if(!superficie.equals("idc")){condition+="AND superficie='"+superficie+"'";}
-        if(!chain.equals("idc")){condition+="(SELECT nom_chain FROM hotel WHERE hotel.ID_hotel=ID_hotel AND nom_chain ='"+chain+"')";}
-        if(!category.equals("idc")){condition+="AND (SELECT category FROM hotel WHERE hotel.ID_hotel=ID_hotel AND category ='"+category+"')";}
-        if(!hotelRooms.equals("idc")){condition+="AND (SELECT hotelRooms FROM hotel WHERE hotel.ID_hotel=ID_hotel AND hotelRooms='"+hotelRooms+"')";}
+        if(!chain.equals("idc")){condition+="AND ('"+chain+"'=SELECT nom_chain FROM hotel WHERE hotel.ID_hotel=ID_hotel)";}
+        if(!category.equals("idc")){condition+="AND ('"+category+"'=SELECT category FROM hotel WHERE hotel.ID_hotel=ID_hotel)";}
+        if(!hotelRooms.equals("idc")){condition+="AND ('"+hotelRooms+"'=SELECT hotelRooms FROM hotel WHERE hotel.ID_hotel=ID_hotel";}
         if(!priceUpper.equals("idc")){condition+="AND prix<='"+priceUpper+"'";}
         if(!priceLower.equals("idc")){condition+="AND prix>='"+priceLower+"'";}
         if(condition.equals("WHERE ")){condition="";}
@@ -143,7 +143,7 @@ public class Database {
     public int getCurrentReservationID(){
         ResultSet result= null;
         try {
-            result = st.executeQuery("SELECT Max(ID_reservation) FROM Reservation AS current_ID;");
+            result = st.executeQuery("SELECT Max(ID_reservation) AS current_ID FROM Reservation;");
         } catch (SQLException e) {
             e.printStackTrace();
         }
