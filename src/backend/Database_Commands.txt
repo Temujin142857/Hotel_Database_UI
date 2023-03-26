@@ -1,7 +1,9 @@
-Constructors:
+//Constructors:
 
+//Schema:
 CREATE SCHEMA IF NOT EXISTS "DBproject" AUTHORIZATION postgres;
 
+//Tables:
 CREATE TABLE IF NOT EXISTS "DBproject"."Chaine"(nom_chaine character varying COLLATE pg_catalog."default" NOT NULL,adresse character varying COLLATE pg_catalog."default",nombre_hotels integer,hotel_emails character varying COLLATE pg_catalog."default",hotel_phones character varying COLLATE pg_catalog."default",CONSTRAINT "Chaine_pkey" PRIMARY KEY (nom_chaine))TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chaine" OWNER to postgres;
 
@@ -14,7 +16,7 @@ ALTER TABLE IF EXISTS "DBproject"."Employé" OWNER to postgres;
 CREATE TABLE IF NOT EXISTS "DBproject"."Reservation" ( "ID_reservation" integer NOT NULL, "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, "NAS_client" character(9) COLLATE pg_catalog."default", status_paiement boolean, CONSTRAINT "Reservation_pkey" PRIMARY KEY ("ID_reservation") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Reservation" OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS "DBproject"."Location" ( "ID_location" integer NOT NULL, "NAS_employé" character(9) COLLATE pg_catalog."default", "NAS_client" character(9) COLLATE pg_catalog."default", "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, CONSTRAINT "Location_pkey" PRIMARY KEY ("ID_location") ) TABLESPACE pg_default;
+CREATE TABLE IF NOT EXISTS "DBproject"."Location" ( "ID_location" integer NOT NULL, "ID_reservation" integer NOT NULL COLlATE pg_catalog."default", "NAS_employé" character(9) COLLATE pg_catalog."default", "NAS_client" character(9) COLLATE pg_catalog."default", "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, CONSTRAINT "Location_pkey" PRIMARY KEY ("ID_location") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Location" OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS "DBproject"."Client" ( "NAS_client" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "date_enregistré" date, adresse character varying COLLATE pg_catalog."default", CONSTRAINT "Client_pkey" PRIMARY KEY ("NAS_client") ) TABLESPACE pg_default;
@@ -24,11 +26,13 @@ CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) CO
 ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
 
 
-CREATE  OR REPLACE FUNCTION sync_reservation_rentalF
-    RETURNS TRIGGER
-    LANGUAGE SQL
+//Triggers:
+CREATE OR REPLACE FUNCTION "DBproject".sync_reservation_rentalf()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
     AS $BODY$
-
 BEGIN
     SELECT COUNT(ID_reservation) AS num FROM Reservation WHERE ID_reservation = NEW.ID_Reservation;
     IF num=0 THEN
@@ -37,58 +41,81 @@ BEGIN
             VALUES(NEW.ID_reservation, NEW.NAS_client, NEW.ID_chambre, NEW.Date_start, NEW.Date_end);
     END IF;
 END;
-$BODY$
+$BODY$;
 
+ALTER FUNCTION "DBproject".sync_reservation_rentalf()
+    OWNER TO postgres;
 
-CREATE TRIGGER sync_reservation_rental
+CREATE OR REPLACE TRIGGER sync_reservation_rental
     BEFORE INSERT
-    ON Location
+    ON "DBproject"."Location"
     FOR EACH ROW
-    EXECUTE PROCEDURE sync_reservation_rentalF();
+    EXECUTE FUNCTION "DBproject".sync_reservation_rentalf();
 
-CREATE TRIGGER name1
-BEFORE UPDATE ON Location
-FOR EACH ROW
+CREATE OR REPLACE FUNCTION "DBproject".sync_reservation_rental_updatef()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+    AS $BODY$
 BEGIN
-UPDATE Reservation(ID_reservation, NAS_client, ID_chambre, Date_start, Date_end)
-   SET ID_reservation=NEW.ID_reservation,NAS_client=NEW.NAS_client, ID_chambre=NEW.ID_chambre, Date_start=NEW.Date_start, Date_end=NEW.Date_end
-   WHERE NEW.ID_Reservation=ID_Reservation;
+    UPDATE Reservation
+       SET NAS_client=NEW.NAS_client, ID_chambre=NEW.ID_chambre, Date_start=NEW.Date_start, Date_end=NEW.Date_end
+       WHERE NEW.ID_Reservation=ID_Reservation;
 END;
+$BODY$;
 
-Views:
-CREATE VIEW numOfRoomsByZone AS
-SELECT COUNT Chambre
-FROM Hotel
-WHERE Adresse LIKE %cityname%;
+ALTER FUNCTION "DBproject".sync_reservation_rental_updatef()
+    OWNER TO postgres;
 
-CREATE VIEW capacityOfHotel AS
-SELECT Capacity
-FROM ROOM
-WHERE ID_hotel=GIVEN_ID_hotel
-
-Indexes:
-CREATE INDEX idx_roomByHotel
-ON Chambre (ID_hotel);
-
-CREATE INDEX idx_RentalByDate
-ON Location (date_start,date_end);
-
-CREATE INDEX idx_RentalByRoom
-ON Location (ID_Chambre);
-
-CREATE INDEX idx_ReservationByDate
-ON Reservation (date_start,date_end);
-
-CREATE INDEX idx_ReservationByRoom
-ON Reservation (ID_Chambre);
-
-CREATE INDEX idx_hotelByAddress
-ON Hotel (Addresse)
+CREATE OR REPLACE TRIGGER sync_reservation_rental_update
+    BEFORE UPDATE
+    ON "DBproject"."Location"
+    FOR EACH ROW
+    EXECUTE
+    FUNCTION "DBproject".sync_reservation_rental_updatef();
 
 
-break
+//Indexes:
+CREATE INDEX IF NOT EXISTS room_by_hotel
+    ON "DBproject"."Chambre" USING hash
+    ("ID_hotel" COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS rental_by_date
+ON "DBproject"."Location" USING btree
+(date_start ASC NULLS LAST,date_end ASC NULLS LAST)
+TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS rental_by_room
+ON "DBproject"."Location" USING hash
+    ("ID_chambre" COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS rental_by_reservation
+ON "DBproject"."Location" USING hash
+    ("ID_reservation" COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS  reservation_by_date
+ON "DBproject"."Reservation" USING btree
+(date_start ASC NULLS LAST,date_end ASC NULLS LAST)
+TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS reservation_by_room
+ON "DBproject"."Reservation" USING hash
+    ("ID_chambre" COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS hotel_by_address
+ON "DBproject".Hotel" USING hash
+    ("adresse" COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+
+break;
 Commands to run to update backend.Database:
 
 
-break
+break;
 

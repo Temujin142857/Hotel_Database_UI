@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import global.*;
 import global.users.User;
@@ -14,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 public class Database {
-    private final String[] sections= new String[]{"Constructors:","Commands to run to update backend.Database:"};
+    private final String[] sections= new String[]{"Constructors:"};
     private Connection conn;//protecting it from garbage collection, maybe unnecisary
     private Statement st;
     private GuardDog goodBoy;
@@ -37,14 +38,21 @@ public class Database {
         }
     }
 
-    //code for views,
-    //CREATE VIEW view_name AS SELECT column1, column2, ... FROM table_name WHERE condition;
-    //first view is number of rooms availible per zone, define zone using address maybe
-    //CREATE VIEW roomsPerZone AS SELECT SUM(nombres_chambres) FROM hotel WHERE address LIKE %SpecifiedZone%
-    //specified zone is either a city name, country name, ect. basically any string that would be in address
-    //second view is the capacity per room, given a hotel
-    //CREATE VIEW capacityPerRoom AS SELECT * FROM room WHERE ID_hotel=givenID_hotel ORDER BY capacity
-    //returning a table of only capacity would be pretty useless, so I'll just organise it by capacity
+
+    //Views:
+    //
+    //CREATE OR REPLACE VIEW "DBproject".numOfRoomsByZone AS
+    //    SELECT count("Hotel".nombre_chambres) AS count
+    //    FROM "DBproject"."Hotel"
+    //    WHERE "Hotel".adresse::text ~~ '%cityname%'::text;
+    //
+    //ALTER TABLE "DBproject".name1
+    //    OWNER TO postgres;
+    //
+    //CREATE OR REPLACE VIEW "DBproject".capacityOfHotel AS
+    //SELECT capacité
+    //FROM "DBproject"."Chambre"
+    //WHERE ID_hotel=GIVEN_ID_hotel
 
     /**
      * voir les chambres disponibles en donnant des critères
@@ -235,38 +243,55 @@ public class Database {
         int i=0;
         String line;
         String nLine;
-        while(scanner.hasNext()) {
-            line= scanner.nextLine();
-            if (line.equals(section)) {
-                read = true;
-            } else if (line.equals("break")) {
-                read = false;
-            }
-            if (read) {
-                i++;
-                while(!line.contains(";")){
-                    line+= scanner.nextLine();
+        try {
+            while (scanner.hasNext()) {
+                line = scanner.nextLine();
+
+                if (line.equals("//"+section)) {
+                    read = true;
                 }
-                if(line.contains("BEGIN")){
-                    while(true){
-                        nLine=scanner.nextLine();
-                        line+= " "+nLine;
-                        if(nLine.equals("END;")){break;}
+                if (read) {
+                    i++;
+
+                    while (line.contains("//")||StringUtils.isAllBlank(line)){
+                        line=scanner.nextLine();
+                    }
+
+                    while (!line.contains(";")) {
+                        line += "\n" + scanner.nextLine();
+
+                    }
+                    if (line.contains("BEGIN")) {
+                        while (true) {
+                            nLine = scanner.nextLine();
+                            line += "\n" + nLine;
+                            if (nLine.equals("END;")) {
+                                break;
+                            }
+                        }
+                    }
+                    if (line.contains("$")) {
+                        while (StringUtils.countMatches(line, '$') != 4) {
+                            nLine = scanner.nextLine();
+                            line += "\n" + nLine;
+                        }
+                    }
+                    if(line.contains("break;")){
+                        read=false;
+                        continue;
+                    }
+                    try {
+                        st.executeUpdate(line);
+                    } catch (SQLException e) {
+                        System.out.println("invalid command, at command#" + i);
+                        System.out.println("issue:\n"+line+"\n");
+                        e.printStackTrace();
                     }
                 }
-                if(line.contains("$")){
-                    while(StringUtils.countMatches(line,'$')!=4){
-                        nLine=scanner.nextLine();
-                        line+= " "+nLine;
-                    }
-                }
-                try {
-                    st.executeUpdate(line);
-                } catch (SQLException e) {
-                    System.out.println("invalid command, at command#" + i);
-                    e.printStackTrace();
-                }
             }
+        }
+        catch (NoSuchElementException e){
+            System.out.println("you're missing a ;, END;, or $BODY$ somewhere");
         }
     }
 
