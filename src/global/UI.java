@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-//this is where the backend with comomunicate with the GUI
+//this is where the backend with communicate with the GUI
 public class UI {
     private final ArrayList<String> possibleConditions=new ArrayList<>(Arrays.asList("dateStart", "dateEnd", "capacity", "superficie", "chain", "category", "hotelRooms", "priceUpper", "priceLower"));
     private final String databaseName="Hotels";
