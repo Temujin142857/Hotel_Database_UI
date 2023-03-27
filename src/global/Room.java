@@ -1,5 +1,7 @@
 package global;
 
+import java.util.HashMap;
+
 public class Room {
     private int ID_chambre;
     private int ID_hotel;
@@ -48,6 +50,19 @@ public class Room {
 
     public String getVue() {
         return vue;
+    }
+
+    public HashMap<String,String> getValues(){
+        HashMap values=new HashMap<>();
+        values.put("ID_chambre",ID_chambre);
+        values.put("ID_hotel",ID_hotel);
+        values.put("prix",prix);
+        values.put("commodities",commodities);
+        values.put("capaity",capacity);
+        values.put("vue",vue);
+        values.put("peut_etendre",peut_etendre);
+        values.put("dommages",dommages);
+        return values;
     }
 
 }

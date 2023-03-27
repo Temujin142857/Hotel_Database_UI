@@ -112,6 +112,11 @@ public class Database {
         return getRooms(USER,c.get("dateStart"),c.get("dateEnd"),c.get("capacity"),c.get("superficie"),c.get("chain"),c.get("category"),c.get("hotelRooms"),c.get("priceUpper"),c.get("priceLower"),toSort);
     }
 
+    public Room getRoom(String roomID){
+        String request="SELECT * FROM chambre WHERE chambre_ID='"+roomID+"'";
+        return executeRequestRoom(request);
+    }
+
     /**
      *  L’interface utilisateur doit permettre l’insertion/suppression/mise à jour
      * de toutes les informations relatives aux clients, aux employés, aux hôtels et aux
@@ -234,6 +239,18 @@ public class Database {
         return rooms.toArray(new Room[]{});
     }
 
+    private Room executeRequestRoom(String request){
+        try {
+            ResultSet rs = st.executeQuery(request);
+            while (rs.next()) {
+                return new Room(rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getBoolean(7),rs.getString(8));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
     public void autoUpdate(User USER) throws UnauthorisedAccessException {
@@ -312,6 +329,4 @@ public class Database {
             System.out.println("you're missing a ;, END;, or $BODY$ somewhere");
         }
     }
-
-
 }

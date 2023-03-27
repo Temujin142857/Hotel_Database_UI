@@ -117,6 +117,16 @@ public class UI {
         return reservationID;
     }
 
+    public int createReservation(User user, String roomID, String clientID,String dateStart, String dateEnd) throws UnauthorisedAccessException {
+        Room room=database.getRoom(roomID);
+        HashMap values=room.getValues();
+        values.put("date_start",dateStart);
+        values.put("date_end",dateEnd);
+        values.put("NAS_client",clientID);
+        return createReservation(user,values);
+    }
+
+
     private int getNextReservationID(){
         if (reservationID==-1){reservationID=database.getCurrentReservationID();}
         reservationID++;
