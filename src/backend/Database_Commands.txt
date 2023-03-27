@@ -113,6 +113,16 @@ ON "DBproject".Hotel" USING hash
     TABLESPACE pg_default;
 
 
+//views:
+CREATE OR REPLACE VIEW "DBproject".numOfRoomsByZone AS
+    SELECT count("Hotel".nombre_chambres)
+    FROM "DBproject"."Hotel"
+    WHERE "Hotel".adresse::text ~~ '%cityname%'::text;
+
+
+
+
+
 break;
 Commands to run to update backend.Database:
 

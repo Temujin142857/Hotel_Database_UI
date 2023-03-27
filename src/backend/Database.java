@@ -16,9 +16,11 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Database {
     private final String[] sections= new String[]{"Constructors:"};
+    private final String[] zones=new    String[]{"placeholder"};
     private Connection conn;//protecting it from garbage collection, maybe unnecisary
     private Statement st;
     private GuardDog goodBoy;
+
 
     public Database(String databaseName, String user, String password) throws SQLException {
         goodBoy=new GuardDog();
@@ -46,13 +48,29 @@ public class Database {
     //    FROM "DBproject"."Hotel"
     //    WHERE "Hotel".adresse::text ~~ '%cityname%'::text;
     //
-    //ALTER TABLE "DBproject".name1
-    //    OWNER TO postgres;
-    //
     //CREATE OR REPLACE VIEW "DBproject".capacityOfHotel AS
     //SELECT capacité
     //FROM "DBproject"."Chambre"
     //WHERE ID_hotel=GIVEN_ID_hotel
+
+    //view one
+    public HashMap<String,Integer> numOfRoomsByZone(){
+        //access the relavent view
+        return null;
+    }
+
+    public HashMap<String, Integer> capcityOFRoomsInHotel(String hotel){
+        HashMap<String,Integer> result=new HashMap<>();
+        try {
+            st.execute("CREATE OR REPLACE VIEW \"DBproject\".capacityOfHotel AS SELECT capacité FROM \"DBproject\".\"Chambre\" WHERE ID_hotel="+hotel+";");
+            ResultSet rt=st.executeQuery("SELECT * FROM \"DBproject\".capacityOfHotel");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     /**
      * voir les chambres disponibles en donnant des critères
