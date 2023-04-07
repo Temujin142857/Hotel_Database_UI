@@ -99,6 +99,7 @@ public class Database {
         if(!hotelRooms.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="(ID_hotel=SELECT ID_hotel FROM hotel WHERE nombre_chambre='"+hotelRooms+"')";}
         if(!priceUpper.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="prix<='"+priceUpper+"'";}
         if(!priceLower.equals("idc")){if(!condition.equals("WHERE ")){condition+="AND ";}condition+="prix>='"+priceLower+"'";}
+
         else if(condition.equals("WHERE ")){condition="";}
 
         if(toSort.equals("idc")){sort="";}
@@ -146,7 +147,6 @@ public class Database {
             sqlColumns+=columns[i];
             sqlValues+="'"+values[i]+"'";
             if (i!=columns.length-1){sqlColumns+=", ";sqlValues+=", ";}
-
         }
         sqlColumns+=")";
         sqlValues+=")";
