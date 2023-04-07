@@ -5,5 +5,5 @@ public class GUI {
     //you can make a reservation with createReservation
     //pass it a user, a roomID, clientNAS, dateStart and dateEnd
     //
-
+    //consider some manual garbage collection for the rooms depending on how it gets set up
 }
