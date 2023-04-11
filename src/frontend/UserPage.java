@@ -2,6 +2,7 @@ package frontend;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.InputMismatchException;
 
 public class UserPage extends JFrame {
     private JLabel checkInLabel;
@@ -34,9 +35,11 @@ public class UserPage extends JFrame {
         // create the header section
         JPanel header = new JPanel();
         header.setLayout(new BorderLayout());
+        header.setBackground(beige);
         
         JPanel flex = new JPanel();
         flex.setLayout(new FlowLayout(FlowLayout.LEFT));
+        flex.setBackground(beige);
         
         JLabel logo = new JLabel("Welcome!");
         logo.setFont(new Font("Arial",Font.PLAIN,25));
@@ -48,12 +51,16 @@ public class UserPage extends JFrame {
         JPanel navbar = new JPanel();
         navbar.setLayout(new FlowLayout(FlowLayout.LEFT));
         JButton reservationBtn = new JButton("View your reservations");
+        reservationBtn.setBackground(nugreen);
+        reservationBtn.setForeground(Color.WHITE);
+        navbar.setBackground(beige);
         navbar.add(reservationBtn);
         header.add(navbar, BorderLayout.CENTER);
         add(header, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(beige);
 
         // Availability Section
         JPanel availabilityPanel = new JPanel();
@@ -62,60 +69,76 @@ public class UserPage extends JFrame {
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(8, 1, 5, 5));
+        inputPanel.setBackground(beige);
         availabilityPanel.add(inputPanel);
 
+        //TODO: have it pick a date
         checkInLabel = new JLabel("Check in *");
+        checkInLabel.setForeground(nugreen);
         checkInField = new JTextField();
         inputPanel.add(checkInLabel);
         inputPanel.add(checkInField);
 
         checkOutLabel = new JLabel("Check out *");
+        checkOutLabel.setForeground(nugreen);
         checkOutField = new JTextField();
+        checkOutField.setForeground(nugreen);
         inputPanel.add(checkOutLabel);
         inputPanel.add(checkOutField);
 
         capacityLabel = new JLabel("Capacity *");
+        capacityLabel.setForeground(nugreen);
         String[] capacityOptions = {"single", "double"};
         adultsComboBox = new JComboBox<>(capacityOptions);
         inputPanel.add(capacityLabel);
         inputPanel.add(adultsComboBox);
 
         chainLabel = new JLabel("Chain *");
-        String[] chains = {"1", "2", "3", "4", "5"};
+        chainLabel.setForeground(nugreen);
+        String[] chains = {"","Marriott", "Hilton", "InterContinental", "Choice", "Wyndham"};
         chainComboBox = new JComboBox<>(chains);
         inputPanel.add(chainLabel);
         inputPanel.add(chainComboBox);
 
         classLabel = new JLabel("Class *");
+        classLabel.setForeground(nugreen);
         String[] classes = {"1", "2", "3", "4", "5"};
         classComboBox = new JComboBox<>(classes);
+        classComboBox.setForeground(mainblue);
         inputPanel.add(classLabel);
         inputPanel.add(classComboBox);
         
         minPriceLabel = new JLabel("Min. Price *");
+        minPriceLabel.setForeground(nugreen);
         minPriceField = new JTextField();
+        minPriceField.setForeground(mainblue);
         inputPanel.add(minPriceLabel);
         inputPanel.add(minPriceField);
 
         maxPriceLabel = new JLabel("Max. Price *");
+        maxPriceLabel.setForeground(nugreen);
         maxPriceField = new JTextField();
+        maxPriceField.setForeground(mainblue);
         inputPanel.add(maxPriceLabel);
         inputPanel.add(maxPriceField);
 
         checkAvailabilityButton = new JButton("Check Availability");
+        checkAvailabilityButton.setForeground(lightgreen);
+        checkAvailabilityButton.setBackground(mainblue);
         inputPanel.add(checkAvailabilityButton);
 
         JPanel filterPanel = new JPanel();
         filterbyLabel = new JLabel("Filter by:");
+        filterbyLabel.setForeground(nugreen);
         filterbyLabel.setHorizontalAlignment(JLabel.RIGHT);
         String[] filters = {"","Price-Low to High", "Price-High to Low"};
         filterComboBox = new JComboBox<>(filters);
+        filterComboBox.setForeground(nugreen);
         filterPanel.add(filterbyLabel);
         filterPanel.add(filterComboBox);
+        filterPanel.setBackground(beige);
         availabilityPanel.add(filterPanel);
         
-
-
         add(mainPanel);
         pack();
         setVisible(true);
