@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Renting.com|Login</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<h1 class="label">Renting.com</h1>
+		<form class="login_form" action=".html" method="post" name="form" onsubmit="return validated()">
+			<div class="font">Email</div>
+			<input autocomplete="off" type="text" name="email">
+			<div id="email_error">Please type in your email</div>
+			<div class="font font2">Password</div>
+			<input type="password" name="password">
+			<div id="pass_error">Please type in your password</div>
+			<button type="submit"><it>LOGIN</it></button>
+		</form>
+	</div>	
+	<script src="valid.js"></script>
+</body>
+</html>
