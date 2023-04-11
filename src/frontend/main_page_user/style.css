@@ -41,3 +41,15 @@ html{
    scroll-padding-top: 2rem;
 }
 
+section{
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+ 
+.header .flex{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}

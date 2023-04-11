@@ -11,11 +11,10 @@
 		<form class="login_form" action=".html" method="post" name="form" onsubmit="return validated()">
 			<div class="font">Email</div>
 			<input autocomplete="off" type="text" name="email">
-			<div id="email_error">Please type in your email</div>
 			<div class="font font2">Password</div>
 			<input type="password" name="password">
-			<div id="pass_error">Please type in your password</div>
 			<button type="submit"><it>LOGIN</it></button>
+			<div id="invalid_error">Wrong username or password!</div>
 		</form>
 	</div>	
 	<script src="valid.js"></script>

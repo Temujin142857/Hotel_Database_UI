@@ -3,7 +3,6 @@
 	margin: 0;
 }
 body{
-    background-color: #E5E1C2;
 	align-items: center;
 	justify-content: center;
 	display: flex;
@@ -38,7 +37,7 @@ body{
 	padding: 0 5px;
 	font-size: 18px;
 	outline: none;
-	border: 1px solid silver;
+	border: none;
 }
 .login_form .font2{
 	margin-top: 30px;
@@ -56,12 +55,13 @@ body{
 	background: #227C70;
     border-radius: 3px;
 	transition: .5s;
+	border: none;
 }
 .login_form button:hover{
 	background: #21A492;
 }
-.login_form #email_error,
-.login_form #pass_error{
+
+.login_form #invalid_error{
 	margin-top: 5px;
 	width: 345px;
 	font-size: 18px;
@@ -76,6 +76,5 @@ body{
 
 h1{
     font-style: italic;
-    color: white;
     text-align: center;
 }
