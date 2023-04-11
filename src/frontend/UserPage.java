@@ -9,11 +9,17 @@ public class UserPage extends JFrame {
     private JLabel capacityLabel;
     private JLabel classLabel;
     private JLabel chainLabel;
+    private JLabel minPriceLabel;
+    private JLabel maxPriceLabel;
+    private JLabel filterbyLabel;
     private JTextField checkInField;
     private JTextField checkOutField;
+    private JTextField minPriceField;
+    private JTextField maxPriceField;
     private JComboBox<String> chainComboBox;
     private JComboBox<String> adultsComboBox;
     private JComboBox<String> classComboBox;
+    private JComboBox<String> filterComboBox;
     private JButton checkAvailabilityButton;
 
     Color mainblue = new Color(28,49,94);
@@ -24,7 +30,6 @@ public class UserPage extends JFrame {
     public UserPage() {
         setTitle("Renting.com | Not just a website~! Actually not a website at all, even!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
         
         // create the header section
         JPanel header = new JPanel();
@@ -33,27 +38,19 @@ public class UserPage extends JFrame {
         JPanel flex = new JPanel();
         flex.setLayout(new FlowLayout(FlowLayout.LEFT));
         
-        JLabel logo = new JLabel("Hotels");
+        JLabel logo = new JLabel("Welcome!");
         logo.setFont(new Font("Arial",Font.PLAIN,25));
         logo.setForeground(mainblue);
-        
         flex.add(logo);
         
         header.add(flex, BorderLayout.WEST);
         
-        
         JPanel navbar = new JPanel();
         navbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JButton reservationBtn = new JButton("Your reservations");
-
-        
+        JButton reservationBtn = new JButton("View your reservations");
         navbar.add(reservationBtn);
-
-        
         header.add(navbar, BorderLayout.CENTER);
-        
         add(header, BorderLayout.NORTH);
-
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -64,7 +61,7 @@ public class UserPage extends JFrame {
         mainPanel.add(availabilityPanel);
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(5, 1, 5, 5));
+        inputPanel.setLayout(new GridLayout(8, 1, 5, 5));
         availabilityPanel.add(inputPanel);
 
         checkInLabel = new JLabel("Check in *");
@@ -94,11 +91,30 @@ public class UserPage extends JFrame {
         classComboBox = new JComboBox<>(classes);
         inputPanel.add(classLabel);
         inputPanel.add(classComboBox);
+        
+        minPriceLabel = new JLabel("Min. Price *");
+        minPriceField = new JTextField();
+        inputPanel.add(minPriceLabel);
+        inputPanel.add(minPriceField);
 
-        JPanel buttonPanel = new JPanel();
+        maxPriceLabel = new JLabel("Max. Price *");
+        maxPriceField = new JTextField();
+        inputPanel.add(maxPriceLabel);
+        inputPanel.add(maxPriceField);
+
         checkAvailabilityButton = new JButton("Check Availability");
-        buttonPanel.add(checkAvailabilityButton);
-        availabilityPanel.add(buttonPanel);
+        inputPanel.add(checkAvailabilityButton);
+
+        JPanel filterPanel = new JPanel();
+        filterbyLabel = new JLabel("Filter by:");
+        filterbyLabel.setHorizontalAlignment(JLabel.RIGHT);
+        String[] filters = {"","Price-Low to High", "Price-High to Low"};
+        filterComboBox = new JComboBox<>(filters);
+        filterPanel.add(filterbyLabel);
+        filterPanel.add(filterComboBox);
+        availabilityPanel.add(filterPanel);
+        
+
 
         add(mainPanel);
         pack();
