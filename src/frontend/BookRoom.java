@@ -15,6 +15,12 @@ public class BookRoom extends JFrame{
     private JLabel errorMsg;
     private JLabel successMsg;
     private JLabel userSINLabel;
+    private JLabel creditCardNumberLabel;
+    private JTextField creditCardNumberField;
+    private JLabel CVVLabel;
+    private JTextField CVVField;
+    private JLabel expiryLabel;
+    private JTextField expiryField;
     private JTextField userSINField;
     private JTextField roomIDField;
     private JButton roomConfirmBtn;
@@ -33,7 +39,8 @@ public class BookRoom extends JFrame{
         setLayout(new BorderLayout());
         getContentPane().setBackground(mainblue);
 
-        JPanel overallPanel = new JPanel(new FlowLayout());
+        JPanel overallPanel = new JPanel();
+        overallPanel.setLayout(new BoxLayout(overallPanel,BoxLayout.Y_AXIS));
         overallPanel.setBackground(mainblue);
 
         roomIDlabel = new JLabel("Enter the desired Room ID");
@@ -62,12 +69,29 @@ public class BookRoom extends JFrame{
         userSINLabel.setForeground(Color.WHITE);
         userSINField = new JTextField();
 
+        creditCardNumberLabel = new JLabel("Enter credit card number:");
+        creditCardNumberLabel.setForeground(lightgreen);
+        creditCardNumberField = new JTextField();
+
+
+        CVVLabel = new JLabel("CVV:");
+        CVVLabel.setForeground(lightgreen);
+        CVVField = new JTextField();
+
+
+        //i sincerely doubt it matters that much that we need to validate this,
+        //so it's staying a text field
+        expiryLabel = new JLabel("Expiry:");
+        expiryLabel.setForeground(lightgreen);
+        expiryField = new JTextField();
+
 
         roomConfirmBtn = new JButton("Confirm!");
         roomConfirmBtn.setBackground(nugreen);
         roomConfirmBtn.setForeground(Color.WHITE);
 
-        JPanel mainPanel = new JPanel(new GridLayout(6,2));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(0,2));
         mainPanel.setBackground(mainblue);
 
         mainPanel.add(checkInLabel);
@@ -78,6 +102,14 @@ public class BookRoom extends JFrame{
         mainPanel.add(roomIDField);
         mainPanel.add(userSINLabel);
         mainPanel.add(userSINField);
+        mainPanel.add(creditCardNumberLabel);
+        mainPanel.add(creditCardNumberField);
+        mainPanel.add(CVVLabel);
+        mainPanel.add(CVVField);
+        mainPanel.add(expiryLabel);
+        mainPanel.add(expiryField);
+
+
         mainPanel.add(roomConfirmBtn);
         overallPanel.add(mainPanel);
 
