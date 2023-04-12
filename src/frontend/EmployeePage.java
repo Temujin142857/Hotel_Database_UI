@@ -2,7 +2,6 @@ package frontend;
 
 import javax.swing.*;
 import org.jdatepicker.impl.*;
-import global.users.User;
 import java.awt.*;
 import java.util.Properties;
 
@@ -20,6 +19,7 @@ public class EmployeePage extends JFrame{
     private JComboBox<String> adultsComboBox;
     private JComboBox<String> classComboBox;
     private JButton checkAvailabilityButton;
+    private JButton bookRoomButton;
 
     Color mainblue = new Color(28,49,94);
     Color nugreen = new Color(34, 124, 112);
@@ -132,11 +132,23 @@ public class EmployeePage extends JFrame{
         checkAvailabilityButton.setBackground(mainblue);
         inputPanel.add(checkAvailabilityButton);
 
+        bookRoomButton = new JButton("Book room now");
+        bookRoomButton.setForeground(Color.WHITE);
+        bookRoomButton.setBackground(mainblue);
+        inputPanel.add(bookRoomButton);
+
+
 
         add(mainPanel);
         pack();
-        setVisible(true);
 
+        bookRoomButton.addActionListener(e ->{
+            new BookRoom();
+        });
+
+
+
+        setVisible(true);
     }
     public static void main(String[] args) {
         new EmployeePage();

@@ -122,6 +122,8 @@ public class UserPage extends JFrame {
         inputPanel.add(maxPriceLabel);
         inputPanel.add(maxPriceField);
 
+        
+
         checkAvailabilityButton = new JButton("Check Availability");
         checkAvailabilityButton.setForeground(lightgreen);
         checkAvailabilityButton.setBackground(mainblue);

@@ -1,5 +1,8 @@
 package frontend;
+import javax.swing.*;
+import java.awt.*;
 
-public class ConvertReservation {
+
+public class ConvertReservation extends JFrame {
     
 }
