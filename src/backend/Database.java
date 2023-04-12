@@ -41,24 +41,20 @@ public class Database {
     }
 
 
-    //Views:
-    //
-    //CREATE OR REPLACE VIEW "DBproject".numOfRoomsByZone AS
-    //    SELECT count("Hotel".nombre_chambres) AS count
-    //    FROM "DBproject"."Hotel"
-    //    WHERE "Hotel".adresse::text ~~ '%cityname%'::text;
-    //
-    //CREATE OR REPLACE VIEW "DBproject".capacityOfHotel AS
-    //SELECT capacité
-    //FROM "DBproject"."Chambre"
-    //WHERE ID_hotel=GIVEN_ID_hotel
-
-    //view one
-    public HashMap<String,Integer> numOfRoomsByZone(){
+    /**
+     * accessing the view for the given zone
+     * @return
+     */
+    public HashMap<String,Integer> numOfRoomsByZone(String Zone){
         //access the relavent view
         return null;
     }
 
+    /**
+     * creates a view based on the room capacity of a given hotel room
+     * @param hotel
+     * @return
+     */
     public HashMap<String, Integer> capcityOFRoomsInHotel(String hotel){
         HashMap<String,Integer> result=new HashMap<>();
         try {
@@ -70,6 +66,9 @@ public class Database {
         return null;
     }
 
+    public boolean userExists(String sin){
+        return true;
+    }
 
 
     /**
@@ -80,8 +79,7 @@ public class Database {
      * de l’hôtel, le nombre total de chambres dans l’hôtel, le prix des chambres. L’utilisateur
      * doit être en mesure de voir les choix disponibles lorsqu’il modifie la valeur de l’un de
      * ces critères
-     * make a tree of possible requests, seems like it would mostly be and's
-     * figure out how to find availibility on an interval of dates
+     *
      * @param USER user credentials, used to control access
      * @return
      */
@@ -118,11 +116,12 @@ public class Database {
         return executeRequestRoom(request);
     }
 
+
     /**
      *  L’interface utilisateur doit permettre l’insertion/suppression/mise à jour
      * de toutes les informations relatives aux clients, aux employés, aux hôtels et aux
      * chambres.
-     * make a tree of possible requests
+     *
      * @param USER user credentials, used to control access
      * @return
      */
@@ -136,7 +135,15 @@ public class Database {
     }
 
 
-
+    /**
+     * Method used to insert new lines into a table, very abstract, can access any table, and any info
+     * info must be valid, i.e. use existing columns and not violate any constraints
+     * @param USER
+     * @param values
+     * @param columns
+     * @param table
+     * @throws UnauthorisedAccessException
+     */
     public void insertInfo(User USER, String[] values, String[] columns, String table) throws UnauthorisedAccessException {
         if(USER.getAccessLevel().equals("CLIENT")&&!table.equals("reservation")){
             throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
@@ -154,6 +161,11 @@ public class Database {
 
     }
 
+
+    /**
+     * finds the next availible ID for rentals
+     * @return
+     */
     public int getCurrentRentalID(){
         ResultSet result= null;
         try {
@@ -172,6 +184,10 @@ public class Database {
         return -2;
     }
 
+    /**
+     * finds the next availible ID for reservations
+     * @return
+     */
     public int getCurrentReservationID(){
         ResultSet result= null;
         try {
@@ -190,6 +206,15 @@ public class Database {
         return 0;
     }
 
+    /**
+     * Takes a reservationID and returns all the information associated with that ID
+     *
+     * @param user
+     * @param reservationID
+     * @return returns a hashmap where the keys are the columns in the reservation table,
+     * and the values are the info associated with each column
+     * @throws InvalidIDException
+     */
     public HashMap<String,String> getReservation(User user, int reservationID)throws InvalidIDException{
         HashMap<String,String> reservation=new HashMap<>();
         ResultSet result=null;
@@ -209,7 +234,7 @@ public class Database {
                     //this might have an error, since I'm not sure what string value of will return here
                     //in theory each object is an int or string, but it might not realise that and use a special
                     //object method giving me an address or random string
-                    //also not sure how safe get columnName is
+                    //also not sure how safe getColumnName is
                     i++;
                 }
             }
@@ -219,11 +244,25 @@ public class Database {
         return reservation;
     }
 
+    /**
+     * used for input and update requests, security checks pending
+     * @param command
+     */
     private void executeCommand(String command){
-        //something something security checks
-        //something something execute command
+       //add some security checks
+        try {
+            st.execute(command);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * final step to getting a list of rooms when a user does a search
+     * it is passed the finished sql request, and returns all the rooms that match the search
+     * @param request
+     * @return
+     */
     private Room[] executeRequestRooms(String request){
         //something something security checks
         ArrayList<Room> rooms=new ArrayList<>();
@@ -239,6 +278,12 @@ public class Database {
         return rooms.toArray(new Room[]{});
     }
 
+    /**
+     * if the user is looking for a specific room using RoomID this method is used to get it
+     * the return statement is in the try-catch, since the method calling this one controlls the request format there should be no errors
+     * @param request
+     * @return
+     */
     private Room executeRequestRoom(String request){
         try {
             ResultSet rs = st.executeQuery(request);
@@ -252,7 +297,16 @@ public class Database {
     }
 
 
-
+    /**
+     * Lets admins auto update the database
+     * more specifically, while my partner and I were working on a local database from two seperate computers
+     * this let us immediately match any changes the other person made on their local system
+     * it relies on the Database_Commands.txt, which contains all the instructions to make the database and update it
+     * the txt contains the schema, tables, indexes, views, and everything else that got put on the database
+     * this function essentially compiles the txt into a form that postgres can accept
+     * @param USER
+     * @throws UnauthorisedAccessException
+     */
     public void autoUpdate(User USER) throws UnauthorisedAccessException {
         if(!USER.getAccessLevel().equals("ADMIN")){
             throw new UnauthorisedAccessException("Users with access level "+USER.getAccessLevel()+" cannot insert info");
@@ -267,7 +321,7 @@ public class Database {
     }
 
     /**
-     * Runs a section of code from the .txt file
+     * Runs a section of code from the Database_Commands.txt file
      * @param section
      * @throws FileNotFoundException
      */
