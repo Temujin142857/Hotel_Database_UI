@@ -1,6 +1,7 @@
 package frontend;
 import javax.swing.*;
 import java.awt.*;
+import global.*;
 
 public class RentingComLogin extends JFrame {
     private JLabel label;
@@ -8,14 +9,15 @@ public class RentingComLogin extends JFrame {
     private JTextField sinField;
     private JButton loginButton;
     private JLabel invalidLabel;
+    private UI ui;
 
     Color mainblue = new Color(28,49,94);
     Color nugreen = new Color(34, 124, 112);
     Color beige = new Color(229,225,194);
     Color lightgreen = new Color(136,164,123);
 
-    public RentingComLogin() {
-        // Set up the window
+    public RentingComLogin() {        // Set up the window
+        ui=new UI();
         setTitle("Renting.com|Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -83,9 +85,7 @@ public class RentingComLogin extends JFrame {
     }
 
     private boolean isValidSin(String sin) {
-        // TODO: Implement SIN validation logic here (it's the SQL)
-        //this should simply check if the SIN exists
-        return false;
+        return ui.userExists(sin);
     }
 
     public static void main(String[] args) {
