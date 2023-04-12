@@ -146,6 +146,10 @@ public class EmployeePage extends JFrame{
             new BookRoom();
         });
 
+        reservConvertBtn.addActionListener(e ->{
+            new ConvertReservation();
+        });
+
 
 
         setVisible(true);
