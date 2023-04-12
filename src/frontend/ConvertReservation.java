@@ -26,21 +26,26 @@ public class ConvertReservation extends JFrame {
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        mainPanel.setBackground(mainblue);
 
         
         JPanel cvvExpiryPanel = new JPanel(new GridLayout(5,2));
+        cvvExpiryPanel.setBackground(mainblue);
 
         reservationIDLabel = new JLabel("Enter reservation ID:");
+        reservationIDLabel.setForeground(lightgreen);
         reservationIDField = new JTextField();
         cvvExpiryPanel.add(reservationIDLabel);
         cvvExpiryPanel.add(reservationIDField);
 
         creditCardNumberLabel = new JLabel("Enter credit card number:");
+        creditCardNumberLabel.setForeground(lightgreen);
         creditCardNumberField = new JTextField();
         cvvExpiryPanel.add(creditCardNumberLabel);
         cvvExpiryPanel.add(creditCardNumberField);
 
         CVVLabel = new JLabel("CVV:");
+        CVVLabel.setForeground(lightgreen);
         CVVField = new JTextField();
         cvvExpiryPanel.add(CVVLabel);
         cvvExpiryPanel.add(CVVField);
@@ -48,11 +53,14 @@ public class ConvertReservation extends JFrame {
         //i sincerely doubt it matters that much that we need to validate this,
         //so it's staying a text field
         expiryLabel = new JLabel("Expiry:");
+        expiryLabel.setForeground(lightgreen);
         expiryField = new JTextField();
         cvvExpiryPanel.add(expiryLabel);
         cvvExpiryPanel.add(expiryField);
 
         JButton booktoReservButton = new JButton("Confirm booking");
+        booktoReservButton.setBackground(nugreen);
+        booktoReservButton.setForeground(Color.white);
         cvvExpiryPanel.add(booktoReservButton);
 
 
