@@ -166,6 +166,11 @@ public class UserPage extends JFrame {
 
         });
 
+        //and another listener for the reservations button
+        reserveBtn.addActionListener(e ->{
+            new ReserveRoom();
+        });
+
         setVisible(true);
     }
 
