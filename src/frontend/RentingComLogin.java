@@ -4,7 +4,7 @@ import java.awt.*;
 import java.sql.SQLException;
 
 import global.*;
-import global.users.*;
+import global.users.User;
 
 
 public class RentingComLogin extends JFrame {
@@ -91,9 +91,9 @@ public class RentingComLogin extends JFrame {
     }
 
     private User userLogin(String sin) throws SQLException {
-        User user=new Client();
-        if(ui.isClient(sin))user=new Employee();
-        return user;
+        String user="CLIENT";
+        if(!ui.isClient(sin))user="EMPLOYEE";
+        return User.makeUser(user);
     }
 
     public static void main(String[] args) {

@@ -3,6 +3,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
 
+import backend.UnauthorisedAccessException;
+import global.users.User;
+import global.*;
+
 import org.jdatepicker.impl.*;
 import java.util.Properties;
 
@@ -15,6 +19,8 @@ public class ReserveRoom extends JFrame{
     private JLabel successMsg;
     private JTextField roomIDField;
     private JButton roomConfirmBtn;
+    private User user;
+
     
     
 
@@ -25,6 +31,7 @@ public class ReserveRoom extends JFrame{
     Color lightgreen = new Color(136,164,123);
 
     public ReserveRoom(){
+        user= User.makeUser("EMPLOYEE");
         setTitle("Make a Reservation");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -93,7 +100,9 @@ public class ReserveRoom extends JFrame{
             //initializes a variable for the SIN
             Date checkinDatepick = (Date) checkindatePicker.getModel().getValue();
             Date checkoutDatepick = (Date) checkoutdatePicker.getModel().getValue();
-            if (makeReservation(SIN, checkinDatepick, checkoutDatepick)){
+            String roomID="";
+
+            if (makeReservation(SIN, roomID, checkinDatepick, checkoutDatepick)){
                 //a check to attempt to make the reservation
                 successMsg.setVisible(true);
             }else{
@@ -103,9 +112,14 @@ public class ReserveRoom extends JFrame{
 
     }
 
-    public boolean makeReservation(String SIN, Date checkin, Date checkout){
-        //TODO:
-        //make said reservation and return a boolean if successful
+    public boolean makeReservation(String SIN,String roomID, Date checkin, Date checkout){
+        UI ui=new UI();
+        try {
+            ui.createReservation(user,SIN, roomID,checkin.toString(), checkout.toString());
+        } catch (UnauthorisedAccessException e) {
+            System.out.println("unauthorised acces, line 120, ReserveRoom");
+            e.printStackTrace();
+        }
         return true;
     }
 }

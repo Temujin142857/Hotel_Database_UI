@@ -1,6 +1,7 @@
 package frontend;
 import javax.swing.*;
 import java.awt.*;
+import global.users.User;
 
 
 public class ConvertReservation extends JFrame {
@@ -12,6 +13,8 @@ public class ConvertReservation extends JFrame {
     private JTextField CVVField;
     private JLabel expiryLabel;
     private JTextField expiryField;
+    private User user;
+
 
     Color mainblue = new Color(28,49,94);
     Color nugreen = new Color(34, 124, 112);
@@ -19,6 +22,7 @@ public class ConvertReservation extends JFrame {
     Color lightgreen = new Color(136,164,123);
 
     public ConvertReservation(){
+        user =User.makeUser("EMPLOYEE");
         setTitle("Convert Reservation to Booking Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
