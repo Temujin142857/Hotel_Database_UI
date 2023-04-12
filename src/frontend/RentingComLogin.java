@@ -60,6 +60,8 @@ public class RentingComLogin extends JFrame {
             String sin = sinField.getText();
             if (isValidSin(sin)) {
                 // TODO: Implement login logic here
+                //this should check what the user type is
+                
 
             } else {
                 invalidLabel.setVisible(true);
@@ -73,6 +75,7 @@ public class RentingComLogin extends JFrame {
 
     private boolean isValidSin(String sin) {
         // TODO: Implement SIN validation logic here (it's the SQL)
+        //this should simply check if the SIN exists
         return false;
     }
 

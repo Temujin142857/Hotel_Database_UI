@@ -1,8 +1,9 @@
 package frontend;
 
 import javax.swing.*;
+import org.jdatepicker.impl.*;
 import java.awt.*;
-import java.util.InputMismatchException;
+import java.util.Properties;
 
 public class UserPage extends JFrame {
     private JLabel checkInLabel;
@@ -13,7 +14,6 @@ public class UserPage extends JFrame {
     private JLabel minPriceLabel;
     private JLabel maxPriceLabel;
     private JLabel filterbyLabel;
-    private JTextField checkInField;
     private JTextField checkOutField;
     private JTextField minPriceField;
     private JTextField maxPriceField;
@@ -72,19 +72,28 @@ public class UserPage extends JFrame {
         inputPanel.setBackground(beige);
         availabilityPanel.add(inputPanel);
 
-        //TODO: have it pick a date
         checkInLabel = new JLabel("Check in *");
         checkInLabel.setForeground(nugreen);
-        checkInField = new JTextField();
         inputPanel.add(checkInLabel);
-        inputPanel.add(checkInField);
+        //The following utilizes a library added in for ease of date picking,
+        //this is just the necessary procedure for it
+        Properties p = new Properties();
+        p.put("text.today","Today");
+        p.put("text.month","Month");
+        p.put("text.year","Year");
+        UtilDateModel model = new UtilDateModel();
+        JDatePanelImpl datePanel = new JDatePanelImpl(model,p);
+        JDatePickerImpl checkindatePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        inputPanel.add(checkindatePicker);
+
 
         checkOutLabel = new JLabel("Check out *");
-        checkOutLabel.setForeground(nugreen);
-        checkOutField = new JTextField();
-        checkOutField.setForeground(nugreen);
+        checkOutLabel.setForeground(nugreen);   
         inputPanel.add(checkOutLabel);
-        inputPanel.add(checkOutField);
+        UtilDateModel model2 = new UtilDateModel();
+        JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
+        JDatePickerImpl checkoutdatePicker = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
+        inputPanel.add(checkoutdatePicker);
 
         capacityLabel = new JLabel("Capacity *");
         capacityLabel.setForeground(nugreen);
