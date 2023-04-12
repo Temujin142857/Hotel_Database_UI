@@ -12,3 +12,6 @@ connect UserPage.java to SQL
 set up employee and admin pages
 
 set up the EmployeePage UI and the corresponding methods
+
+a note--superficie (?) is one of the criteria for choosing a room, which is odd because it's not.. part of the Chambre entity in the first place!
+ 
