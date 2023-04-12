@@ -159,10 +159,9 @@ public class UserPage extends JFrame {
 
         //actionlistener method for the search!
         checkAvailabilityButton.addActionListener(e -> {
-            //here's how you can get a date in SQL format from a datePicker:
-            java.sql.Date checkinDatepick = (java.sql.Date) checkindatePicker.getModel().getValue();
-            java.sql.Date checkoutDatepick = (java.sql.Date) checkoutdatePicker.getModel().getValue();
-            
+            //here's how you can get a date from a datePicker:
+            java.util.Date checkinDatepick = (java.util.Date) checkindatePicker.getModel().getValue();
+            java.util.Date checkoutDatepick = (java.util.Date) checkoutdatePicker.getModel().getValue();
 
         });
 
