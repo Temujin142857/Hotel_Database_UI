@@ -59,7 +59,7 @@ public class ReserveRoom extends JFrame{
         roomConfirmBtn.setBackground(nugreen);
         roomConfirmBtn.setForeground(Color.WHITE);
 
-        JPanel mainPanel = new JPanel(new GridLayout(5,2));
+        JPanel mainPanel = new JPanel(new GridLayout(6,2));
         mainPanel.setBackground(lightgreen);
 
         mainPanel.add(checkInLabel);
@@ -96,7 +96,6 @@ public class ReserveRoom extends JFrame{
             if (makeReservation(SIN, checkinDatepick, checkoutDatepick)){
                 //a check to attempt to make the reservation
                 successMsg.setVisible(true);
-                dispose();
             }else{
                 errorMsg.setVisible(true);
             }
