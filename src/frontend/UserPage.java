@@ -14,7 +14,6 @@ public class UserPage extends JFrame {
     private JLabel minPriceLabel;
     private JLabel maxPriceLabel;
     private JLabel filterbyLabel;
-    private JTextField checkOutField;
     private JTextField minPriceField;
     private JTextField maxPriceField;
     private JComboBox<String> chainComboBox;
@@ -47,15 +46,6 @@ public class UserPage extends JFrame {
         flex.add(logo);
         
         header.add(flex, BorderLayout.WEST);
-        
-        JPanel navbar = new JPanel();
-        navbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JButton reservationBtn = new JButton("View your reservations");
-        reservationBtn.setBackground(nugreen);
-        reservationBtn.setForeground(Color.WHITE);
-        navbar.setBackground(beige);
-        navbar.add(reservationBtn);
-        header.add(navbar, BorderLayout.CENTER);
         add(header, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel();
@@ -77,6 +67,7 @@ public class UserPage extends JFrame {
         inputPanel.add(checkInLabel);
         //The following utilizes a library added in for ease of date picking,
         //this is just the necessary procedure for it
+        // here's a reference: https://www.codejava.net/java-se/swing/how-to-use-jdatepicker-to-display-calendar-component
         Properties p = new Properties();
         p.put("text.today","Today");
         p.put("text.month","Month");
@@ -147,11 +138,38 @@ public class UserPage extends JFrame {
         filterPanel.add(filterComboBox);
         filterPanel.setBackground(beige);
         availabilityPanel.add(filterPanel);
+
+        JPanel reservePanel = new JPanel();
+        JButton reserveBtn = new JButton("Make a reservation");
+        reserveBtn.setBackground(nugreen);
+        reserveBtn.setForeground(Color.WHITE);
+        reserveBtn.setHorizontalAlignment(JButton.LEFT);
+        reservePanel.setBackground(beige);
+        reservePanel.add(reserveBtn);
+        mainPanel.add(reservePanel);
+        
+
+        
+        
+
+
         
         add(mainPanel);
         pack();
+
+        //actionlistener method for the search!
+        checkAvailabilityButton.addActionListener(e -> {
+            //here's how you can get a date in SQL format from a datePicker:
+            java.sql.Date checkinDatepick = (java.sql.Date) checkindatePicker.getModel().getValue();
+            java.sql.Date checkoutDatepick = (java.sql.Date) checkoutdatePicker.getModel().getValue();
+            
+
+        });
+
         setVisible(true);
     }
+
+
     
     public static void main(String[] args) {
         new UserPage();

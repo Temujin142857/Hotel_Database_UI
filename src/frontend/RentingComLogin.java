@@ -60,8 +60,17 @@ public class RentingComLogin extends JFrame {
             String sin = sinField.getText();
             if (isValidSin(sin)) {
                 // TODO: Implement login logic here
-                //this should check what the user type is
-                
+                //this should check what the user type is,
+                String usertype = "";
+                //and based on said type will open a specific page
+                switch (usertype){
+                    case "user":
+                        new UserPage();
+                        this.dispose();
+                    case "employee":
+                        new EmployeePage();
+                        this.dispose();
+                }
 
             } else {
                 invalidLabel.setVisible(true);
