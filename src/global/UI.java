@@ -46,8 +46,8 @@ public class UI {
         throw new InvalidUsernameOrPasswordException();
     }
 
-    public boolean userExists(String sin){
-
+    public boolean isClient(String sin) throws SQLException {
+        return database.isClient(sin);
     }
 
 

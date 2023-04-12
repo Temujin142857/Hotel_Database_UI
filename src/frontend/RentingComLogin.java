@@ -1,7 +1,11 @@
 package frontend;
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
+
 import global.*;
+import global.users.*;
+
 
 public class RentingComLogin extends JFrame {
     private JLabel label;
@@ -60,23 +64,25 @@ public class RentingComLogin extends JFrame {
         // add the actionlistener to the login button
         loginButton.addActionListener(e -> {
             String sin = sinField.getText();
-            if (isValidSin(sin)) {
-                // TODO: Implement login logic here
-                //this should check what the user type is,
-                String usertype = "";
-                //and based on said type will open a specific page
-                switch (usertype){
-                    case "user":
+            try {
+                User user=userLogin(sin);
+                switch (user.getAccessLevel()){
+                    case "USER":
                         new UserPage();
                         this.dispose();
-                    case "employee":
+                    case "EMPLOYEE":
                         new EmployeePage();
                         this.dispose();
                 }
-
-            } else {
+            } catch (SQLException ex) {
                 invalidLabel.setVisible(true);
             }
+            // TODO: Implement login logic here
+            //this should check what the user type is,
+            String usertype = "";
+            //and based on said type will open a specific page
+
+
         });
 
         // Set window size and show it
@@ -84,8 +90,10 @@ public class RentingComLogin extends JFrame {
         setVisible(true);
     }
 
-    private boolean isValidSin(String sin) {
-        return ui.userExists(sin);
+    private User userLogin(String sin) throws SQLException {
+        User user=new Client();
+        if(ui.isClient(sin))user=new Employee();
+        return user;
     }
 
     public static void main(String[] args) {

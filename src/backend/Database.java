@@ -66,8 +66,12 @@ public class Database {
         return null;
     }
 
-    public boolean userExists(String sin){
-        return true;
+    public boolean isClient(String sin) throws SQLException {
+        boolean client=true;
+        String query="SELECT COUNT * FROM CLIENT WHERE NAS_Client = '"+sin+"'";
+        ResultSet rt=st.executeQuery(query);
+        if(rt.getInt(0)==0)client=false;
+        return client;
     }
 
 
