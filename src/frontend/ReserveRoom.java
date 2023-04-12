@@ -77,6 +77,9 @@ public class ReserveRoom extends JFrame{
         errorMsg.setVisible(false);
 
         successMsg = new JLabel("Reservation made successfully!");
+        successMsg.setForeground(nugreen);
+        mainPanel.add(successMsg);
+        successMsg.setVisible(false);
 
         add(overallPanel);
 
@@ -92,7 +95,7 @@ public class ReserveRoom extends JFrame{
             Date checkoutDatepick = (Date) checkoutdatePicker.getModel().getValue();
             if (makeReservation(SIN, checkinDatepick, checkoutDatepick)){
                 //a check to attempt to make the reservation
-
+                successMsg.setVisible(true);
                 dispose();
             }else{
                 errorMsg.setVisible(true);
@@ -104,6 +107,6 @@ public class ReserveRoom extends JFrame{
     public boolean makeReservation(String SIN, Date checkin, Date checkout){
         //TODO:
         //make said reservation and return a boolean if successful
-        return false;
+        return true;
     }
 }
