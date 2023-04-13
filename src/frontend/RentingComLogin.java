@@ -67,12 +67,14 @@ public class RentingComLogin extends JFrame {
             try {
                 User user=userLogin(sin);
                 switch (user.getAccessLevel()){
-                    case "USER":
+                    case "CLIENT":
                         new UserPage(ui);
                         this.dispose();
+                        break;
                     case "EMPLOYEE":
                         new EmployeePage(ui);
                         this.dispose();
+                        break;
                 }
             } catch (SQLException ex) {
                 invalidLabel.setVisible(true);
@@ -88,6 +90,7 @@ public class RentingComLogin extends JFrame {
         // Set window size and show it
         setSize(400, 200);
         setVisible(true);
+        toFront();
     }
 
     private User userLogin(String sin) throws SQLException {

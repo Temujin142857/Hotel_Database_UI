@@ -9,7 +9,6 @@ import java.util.Scanner;
 import global.*;
 import global.users.User;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.ls.LSOutput;
 
 //is it better to make one connection that stays open the entire time database is valid
 //or open a new on every time a command needs to be sent? that seems secure but slow
@@ -23,7 +22,13 @@ public class Database {
     private GuardDog goodBoy;
     private final String urlPart1="jdbc:postgresql://localhost:5432/";
 
-
+    /**
+     * main constructor, sets up the connection
+     * @param databaseName
+     * @param user
+     * @param password
+     * @throws SQLException
+     */
     public Database(String databaseName, String user, String password) throws SQLException {
         goodBoy=new GuardDog();
         try {
@@ -61,7 +66,7 @@ public class Database {
     public HashMap<String, Integer> capcityOFRoomsInHotel(String hotel){
         HashMap<String,Integer> result=new HashMap<>();
         try {
-            st.execute("CREATE OR REPLACE VIEW \"DBproject\".capacityOfHotel AS SELECT capacité FROM \"DBproject\".\"Chambre\" WHERE ID_hotel="+hotel+";");
+            st.execute("CREATE OR REPLACE VIEW \"DBproject\".\"capacityOfHotel\" AS SELECT capacité FROM \"DBproject\".\"Chambre\" WHERE ID_hotel="+hotel+";");
             ResultSet rt=st.executeQuery("SELECT * FROM \"DBproject\".capacityOfHotel");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,7 +76,7 @@ public class Database {
 
     public boolean isClient(String sin) throws SQLException {
         boolean client=true;
-        String query="SELECT COUNT * FROM CLIENT WHERE NAS_Client = '"+sin+"'";
+        String query="SELECT COUNT (*) FROM \"DBproject\".\"CLIENT\" WHERE NAS_Client = '"+sin+"'";
         ResultSet rt=st.executeQuery(query);
         if(rt.getInt(0)==0)client=false;
         return client;

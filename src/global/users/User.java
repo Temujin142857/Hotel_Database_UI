@@ -6,7 +6,7 @@ public interface User {
         if(type.equals("CLIENT"))return new Client();
         if(type.equals("EMPLOYEE"))return new Employee();
         else if(type.equals("ADMIN"))return new Admin();
-        return null;
+        return new Client();
     }
 
 }

@@ -46,7 +46,15 @@ public class UI {
         throw new InvalidUsernameOrPasswordException();
     }
 
+    /**
+     * would normally ask the database to check if the sin is a valid key for a client or employee, but for the moment just uses 1 and 2
+     * @param sin
+     * @return
+     * @throws SQLException
+     */
     public boolean isClient(String sin) throws SQLException {
+        if(sin.equals("1")){return true;}
+        else if(sin.equals("2")){return false;}
         return database.isClient(sin);
     }
 

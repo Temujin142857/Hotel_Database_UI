@@ -13,7 +13,7 @@ ALTER TABLE IF EXISTS "DBproject"."Hotel" OWNER to postgres;
 CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", ID_hotel character(6) COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS "DBproject"."Employé" ( "NAS_employé" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "adresse " character varying COLLATE pg_catalog."default", role character varying COLLATE pg_catalog."default", CONSTRAINT "Employé_pkey" PRIMARY KEY ("NAS_employé") ) TABLESPACE pg_default;
+CREATE TABLE IF NOT EXISTS "DBproject"."Employé" ( "NAS_employé" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "adresse" character varying COLLATE pg_catalog."default", role character varying COLLATE pg_catalog."default", CONSTRAINT "Employé_pkey" PRIMARY KEY ("NAS_employé") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Employé" OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS "DBproject"."Client" ( "NAS_client" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "date_enregistré" date, adresse character varying COLLATE pg_catalog."default", CONSTRAINT "Client_pkey" PRIMARY KEY ("NAS_client") ) TABLESPACE pg_default;
@@ -24,9 +24,6 @@ ALTER TABLE IF EXISTS "DBproject"."Reservation" OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS "DBproject"."Location" ( "ID_reservation" character varying COLLATE pg_catalog."default", "NAS_employé" character(9) COLLATE pg_catalog."default", "NAS_client" character(9) COLLATE pg_catalog."default", "ID_chambre" character(12) COLLATE pg_catalog."default", date_start date, date_end date, "ID_Location" character varying COLLATE pg_catalog."default" NOT NULL, CONSTRAINT "Location_pkey" PRIMARY KEY ("ID_Location"), CONSTRAINT "ID_chambre" FOREIGN KEY ("ID_chambre") REFERENCES "DBproject"."Chambre" ("ID_chambre") MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION NOT VALID, CONSTRAINT "NAS_client" FOREIGN KEY ("NAS_client") REFERENCES "DBproject"."Client" ("NAS_client") MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION NOT VALID, CONSTRAINT "NAS_employé" FOREIGN KEY ("NAS_employé") REFERENCES "DBproject"."Employé" ("NAS_employé") MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION NOT VALID, CONSTRAINT "ID_reservation" FOREIGN KEY ("ID_reservation") REFERENCES "DBproject"."Reservation" ("ID_reservation") MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Location" OWNER to postgres;
-
-
-
 
 
 //Triggers:
@@ -392,6 +389,11 @@ VALUES ('3456 Cedar St, Anytown, USA', 300, 'info@choice5.com', '5556789001', '4
 INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
 VALUES ('7890 Walnut St, Anytown, USA', 150, 'info@choice6.com', '5557890001', '400025', 'Choice', 2);
 
+INSERT INTO "DBproject"."Client"("NAS_client", nom_complet, "date_enregistré", adresse)
+VALUES (111111111,'Tomio', '10/10/10','234 main canada');
+
+INSERT INTO "DBproject"."Employé"("NAS_employé", nom_complet, adresse, role)
+VALUES (222222222,'Zach', '234 2nd street canada','janitor');
 
 break;
 
