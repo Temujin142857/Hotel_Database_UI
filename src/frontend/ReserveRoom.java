@@ -20,6 +20,7 @@ public class ReserveRoom extends JFrame{
     private JTextField roomIDField;
     private JButton roomConfirmBtn;
     private User user;
+    private UI ui;
 
     
     
@@ -30,7 +31,8 @@ public class ReserveRoom extends JFrame{
     Color beige = new Color(229,225,194);
     Color lightgreen = new Color(136,164,123);
 
-    public ReserveRoom(){
+    public ReserveRoom(UI ui){
+        this.ui=ui;
         user= User.makeUser("EMPLOYEE");
         setTitle("Make a Reservation");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

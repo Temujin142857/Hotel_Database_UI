@@ -17,7 +17,6 @@ import java.util.HashMap;
 //this is where the backend will communicate with the GUI
 public class UI {
     private final ArrayList<String> possibleConditions=new ArrayList<>(Arrays.asList("dateStart", "dateEnd", "capacity", "superficie", "chain", "category", "hotelRooms", "priceUpper", "priceLower"));
-    private final String databaseName="Hotels";
     private Database database;
     private User user;
     private int reservationID=-1;
@@ -25,10 +24,11 @@ public class UI {
 
 
     //in the login screen call this function to initialise the database
-    public boolean login(String user, String password){
+    public boolean login(String databaseName, String user, String password){
         try {
             database=new Database(databaseName,user,password);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             return false;
         }
         return true;
@@ -180,5 +180,12 @@ public class UI {
         return makeListOfRooms(stringMap,sortBy);
     }
 
+    public void update(){
+        try {
+            database.autoUpdate(new Admin());
+        } catch (UnauthorisedAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

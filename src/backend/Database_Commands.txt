@@ -7,10 +7,10 @@ CREATE SCHEMA IF NOT EXISTS "DBproject" AUTHORIZATION postgres;
 CREATE TABLE IF NOT EXISTS "DBproject"."Chaine" ( nom_chaine character varying COLLATE pg_catalog."default" NOT NULL, adresse character varying COLLATE pg_catalog."default", nombre_hotels integer, hotel_emails character varying COLLATE pg_catalog."default", hotel_phones character varying COLLATE pg_catalog."default", CONSTRAINT "Chaine_pkey" PRIMARY KEY (nom_chaine) ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chaine" OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS "DBproject"."Hotel" ( adresse character varying COLLATE pg_catalog."default", nombre_chambres integer, email character varying COLLATE pg_catalog."default", telephone integer, "ID_hotel" character(6) COLLATE pg_catalog."default" NOT NULL, nom_chaine character varying COLLATE pg_catalog."default", classe integer, CONSTRAINT "ID_hotel" PRIMARY KEY ("ID_hotel"), CONSTRAINT nom_chaine FOREIGN KEY (nom_chaine) REFERENCES "DBproject"."Chaine" (nom_chaine) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION NOT VALID ) TABLESPACE pg_default;
+CREATE TABLE IF NOT EXISTS "DBproject"."Hotel" ( adresse character varying COLLATE pg_catalog."default", nombre_chambres integer, email character varying COLLATE pg_catalog."default", telephone character varying COLLATE pg_catalog."default", ID_hotel character(6) COLLATE pg_catalog."default" NOT NULL, nom_chaine character varying COLLATE pg_catalog."default", classe integer, CONSTRAINT ID_hotel PRIMARY KEY (ID_hotel), CONSTRAINT nom_chaine FOREIGN KEY (nom_chaine) REFERENCES "DBproject"."Chaine" (nom_chaine) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION NOT VALID ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Hotel" OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", "ID_hotel" character(6) COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
+CREATE TABLE IF NOT EXISTS "DBproject"."Chambre" ( "ID_chambre" character(12) COLLATE pg_catalog."default" NOT NULL, prix integer, "commodités" character varying COLLATE pg_catalog."default", "capacité" character varying COLLATE pg_catalog."default", vue character varying COLLATE pg_catalog."default", peut_etendre boolean, dommages character varying COLLATE pg_catalog."default", ID_hotel character(6) COLLATE pg_catalog."default", CONSTRAINT "Chambre_pkey" PRIMARY KEY ("ID_chambre") ) TABLESPACE pg_default;
 ALTER TABLE IF EXISTS "DBproject"."Chambre" OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS "DBproject"."Employé" ( "NAS_employé" character(9) COLLATE pg_catalog."default" NOT NULL, nom_complet character varying COLLATE pg_catalog."default", "adresse " character varying COLLATE pg_catalog."default", role character varying COLLATE pg_catalog."default", CONSTRAINT "Employé_pkey" PRIMARY KEY ("NAS_employé") ) TABLESPACE pg_default;
@@ -82,7 +82,7 @@ CREATE OR REPLACE TRIGGER sync_reservation_rental_update
 //Indexes:
 CREATE INDEX IF NOT EXISTS room_by_hotel
     ON "DBproject"."Chambre" USING hash
-    ("ID_hotel" COLLATE pg_catalog."default")
+    (ID_hotel COLLATE pg_catalog."default")
     TABLESPACE pg_default;
 
 CREATE INDEX IF NOT EXISTS rental_by_date
@@ -124,10 +124,278 @@ CREATE OR REPLACE VIEW "DBproject".numOfRoomsByZone AS
 
 
 
+//
+
+break;
+
+//Inserts to run on first time setup:
+
+//hotel chains
+INSERT INTO "DBproject"."Chaine"(nom_chaine, adresse,nombre_hotels, hotel_emails, hotel_phones)
+VALUES('Hilton', '123 Main St, Anytown, USA', 10, 'info@hilton.com', '+1-555-123-4567');
+INSERT INTO "DBproject"."Chaine"(nom_chaine, adresse,nombre_hotels, hotel_emails, hotel_phones)
+VALUES('Marriott', '456 Maple Ave, Anycity, USA', 8, 'info@marriott.com', '+1-555-987-6543');
+INSERT INTO "DBproject"."Chaine"(nom_chaine, adresse,nombre_hotels, hotel_emails, hotel_phones)
+VALUES('InterContinental', '789 Oak St, Anystate, USA', 5, 'info@intercontinental.com', '+1-555-555-1212');
+INSERT INTO "DBproject"."Chaine"(nom_chaine, adresse,nombre_hotels, hotel_emails, hotel_phones)
+VALUES('Choice', '321 Elm St, Anycity, USA', 3, 'info@fourseasons.com', '+1-555-444-3333');
+INSERT INTO "DBproject"."Chaine"(nom_chaine, adresse,nombre_hotels, hotel_emails, hotel_phones)
+VALUES('Wyndham', '101 Broad St, Anystate, USA', 2, 'info@ritzcarlton.com', '+1-555-777-8888');
+
+
+
+//14 hotels per chain
+
+//Hilton
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1234 Maple St, Anytown, USA', 200, 'info@hilton1.com', '5551234001', '123456', 'Hilton',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Oak Rd, Anystate, USA', 250, 'info@hilton2.com', '5551234002', '234567', 'Hilton',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9101 Pine Blvd, Anycity, USA', 300, 'info@hilton3.com', '5551234003', '345678', 'Hilton',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1121 Cedar St, Anytown, USA', 150, 'info@hilton4.com', '5551234004', '456789', 'Hilton',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1415 Elm Rd, Anystate, USA', 350, 'info@hilton5.com', '5551234005', '567890', 'Hilton',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1617 Maple Ave, Anytown, USA', 175, 'info@hilton6.com', '5551234006', '678901', 'Hilton',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1819 Oak Blvd, Anycity, USA', 250, 'info@hilton7.com', '5551234007', '789012', 'Hilton',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2021 Pine Rd, Anystate, USA', 300, 'info@hilton8.com', '5551234008', '890123', 'Hilton',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2223 Cedar Blvd, Anytown, USA', 150, 'info@hilton9.com', '5551234009', '901234', 'Hilton',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2425 Elm St, Anycity, USA', 200, 'info@hilton10.com', '5551234010', '012345', 'Hilton',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2627 Maple St, Anytown, USA', 300, 'info@hilton11.com', '5551234010', '111111', 'Hilton', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2829 Oak Rd, Anystate, USA', 175, 'info@hilton12.com', '5551234012', '987654', 'Hilton',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3031 Pine Blvd, Anytown, USA', 250, 'info@hilton13.com', '5551234013', '876543', 'Hilton',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3233 Cedar St, Anycity, USA', 300, 'info@hilton14.com', '5551234014', '765432', 'Hilton',3);
+
+//marriott
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1234 Maple St, Anytown, USA', 150, 'info@marriott1.com', '5551234101', '098765', 'Marriott',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Oak Rd, Anystate, USA', 200, 'info@marriott2.com', '5551234102', '411111', 'Marriott',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9101 Pine Blvd, Anycity, USA', 250, 'info@marriott3.com', '5551234103', '411112', 'Marriott',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1121 Cedar St, Anytown, USA', 300, 'info@marriott4.com', '5551234104', '411113', 'Marriott',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1415 Elm Rd, Anystate, USA', 175, 'info@marriott5.com', '5551234105', '654321', 'Marriott',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1617 Maple Ave, Anytown, USA', 250, 'info@marriott6.com', '5551234106', '543210', 'Marriott',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1819 Oak Blvd, Anycity, USA', 300, 'info@marriott7.com', '5551234107', '432109', 'Marriott',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('4567 Oak St, Anytown, USA', 200, 'info@marriott5.com', '5554567005', '422222', 'Marriott', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('6789 Elm St, Anytown, USA', 250, 'info@marriott6.com', '5556789006', '422223', 'Marriott', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2345 Birch St, Anytown, USA', 300, 'info@marriott7.com', '5552345007', '422224', 'Marriott', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('8901 Pine St, Anytown, USA', 150, 'info@marriott8.com', '5558901008', '422225', 'Marriott', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Cedar St, Anytown, USA', 200, 'info@marriott9.com', '5555678009', '123457', 'Marriott', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Birch St, Anytown, USA', 350, 'info@marriott10.com', '5553456010', '234568', 'Marriott', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9012 Pine St, Anytown, USA', 150, 'info@marriott11.com', '5559012011', '345679', 'Marriott', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('6789 Maple St, Anytown, USA', 300, 'info@marriott12.com', '5556789012', '456780', 'Marriott', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2345 Oak St, Anytown, USA', 150, 'info@marriott13.com', '5552345013', '567891', 'Marriott', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9012 Elm St, Anytown, USA', 250, 'info@marriott14.com', '5559012014', '678902', 'Marriott', 3);
+
+//intercontinental
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1234 Main St, Anytown, USA', 223, 'info@intercontinental1.com', '5551234001', '100001', 'InterContinental',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Elm St, Anytown, USA', 314, 'info@intercontinental2.com', '5551234002', '100002', 'InterContinental',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9012 Oak St, Anytown, USA', 192, 'info@intercontinental3.com', '5551234003', '100003', 'InterContinental',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Pine St, Anytown, USA', 267, 'info@intercontinental4.com', '5551234004', '100004', 'InterContinental',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('7890 Cedar St, Anytown, USA', 184, 'info@intercontinental5.com', '5551234005', '100005', 'InterContinental',1);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1234 Maple St, Anytown, USA', 246, 'info@intercontinental6.com', '5551234006', '100006', 'InterContinental',5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Walnut St, Anytown, USA', 198, 'info@intercontinental7.com', '5551234007', '100007', 'InterContinental',4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9012 Birch St, Anytown, USA', 344, 'info@intercontinental8.com', '5551234008', '100008', 'InterContinental',3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Spruce St, Anytown, USA', 121, 'info@intercontinental9.com', '5551234009', '100009', 'InterContinental',2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('7890 Pine St, Anytown, USA', 319, 'info@intercontinental10.com', '5551234010', '100010', 'InterContinental',1);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('789 Main St, Anytown, USA', 356, 'info@intercontinental1.com', '5557890001', '910001', 'InterContinental', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('456 Elm St, Anytown, USA', 321, 'info@intercontinental2.com', '5554560002', '915555', 'InterContinental', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('890 Oak St, Anytown, USA', 268, 'info@intercontinental3.com', '5558900003', '910002', 'InterContinental', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('567 Pine St, Anytown, USA', 267, 'info@intercontinental4.com', '5555670004', '910003', 'InterContinental', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('901 Cedar St, Anytown, USA', 315, 'info@intercontinental5.com', '5559010005', '102210', 'InterContinental', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('234 Maple St, Anytown, USA', 256, 'info@intercontinental6.com', '5552340006', '100012', 'InterContinental', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('567 Elm St, Anytown, USA', 201, 'info@intercontinental7.com', '5555670007', '100013', 'InterContinental', 2);
+
+//Wyndham
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1234 Maple St, Anytown, USA', 200, 'info@wyndham1.com', '5551234001', '200001', 'Wyndham', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('567 Elm St, Anytown, USA', 310, 'info@wyndham2.com', '5555670002', '200002', 'Wyndham', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9101 Oak St, Anytown, USA', 150, 'info@wyndham3.com', '5559101003', '200003', 'Wyndham', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2468 Main St, Anytown, USA', 300, 'info@wyndham4.com', '5552468004', '200004', 'Wyndham', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1357 Elm St, Anytown, USA', 150, 'info@wyndham5.com', '5551357005', '200005', 'Wyndham', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Oak St, Anytown, USA', 120, 'info@wyndham5.com', '5555678001', '200006', 'Wyndham', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9101 Cherry Ave, Anytown, USA', 150, 'info@wyndham6.com', '5559101001', '200007', 'Wyndham', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1112 Elm St, Anytown, USA', 250, 'info@wyndham7.com', '5551112001', '200008', 'Wyndham', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1314 Pine St, Anytown, USA', 300, 'info@wyndham8.com', '5551314001', '20009', 'Wyndham', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1516 Maple St, Anytown, USA', 200, 'info@wyndham9.com', '5551516001', '200010', 'Wyndham', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1718 Oak St, Anytown, USA', 350, 'info@wyndham10.com', '5551718001', '200011', 'Wyndham', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('1920 Cherry Ave, Anytown, USA', 150, 'info@wyndham11.com', '5551920001', '200012', 'Wyndham', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2122 Elm St, Anytown, USA', 200, 'info@wyndham12.com', '5552122001', '200013', 'Wyndham', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2324 Pine St, Anytown, USA', 300, 'info@wyndham13.com', '5552324001', '200014', 'Wyndham', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2526 Maple St, Anytown, USA', 150, 'info@wyndham14.com', '5552526001', '200015', 'Wyndham', 3);
+
+
+//Choice
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('4567 Oak Ave, Anytown, USA', 205, 'info@choice1.com', '5554567001', '400000', 'Choice', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('6789 Pine St, Anytown, USA', 250, 'info@choice2.com', '5557890001', '400001', 'Choice', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('8901 Elm Blvd, Anytown, USA', 150, 'info@choice3.com', '5559012001', '400002', 'Choice', 1);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2345 Maple Rd, Anytown, USA', 300, 'info@choice4.com', '5552345001', '400003', 'Choice', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Oakwood Dr, Anytown, USA', 180, 'info@choice5.com', '5553456001', '400004', 'Choice', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('7890 Pine St, Anytown, USA', 190, 'info@choice7.com', '5557890001', '400006', 'Choice', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9012 Maple Rd, Anytown, USA', 280, 'info@choice8.com', '5559012001', '400007', 'Choice', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Elm Blvd, Anytown, USA', 130, 'info@choice9.com', '5553456001', '400008', 'Choice', 1);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Oakwood Dr, Anytown, USA', 350, 'info@choice10.com', '5555678001', '400009', 'Choice', 5);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('7890 Cedar Ave, Anytown, USA', 170, 'info@choice11.com', '5557890001', '400010', 'Choice', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('5678 Elm St, Anytown, USA', 300, 'info@choice1.com', '5552345001', '400020', 'Choice', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('9876 Oak St, Anytown, USA', 150, 'info@choice2.com', '5553456001', '400021', 'Choice', 2);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('2345 Pine St, Anytown, USA', 250, 'info@choice3.com', '5554567001', '400022', 'Choice', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('6789 Birch St, Anytown, USA', 200, 'info@choice4.com', '5555678001', '400023', 'Choice', 4);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('3456 Cedar St, Anytown, USA', 300, 'info@choice5.com', '5556789001', '400024', 'Choice', 3);
+
+INSERT INTO "DBproject"."Hotel"(adresse, nombre_chambres, email, telephone, ID_hotel, nom_chaine, classe)
+VALUES ('7890 Walnut St, Anytown, USA', 150, 'info@choice6.com', '5557890001', '400025', 'Choice', 2);
 
 
 break;
-Commands to run to update backend.Database:
+
+Inserts to run to update backend.Database:
 
 
 break;

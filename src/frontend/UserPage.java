@@ -5,6 +5,7 @@ import org.jdatepicker.impl.*;
 import java.awt.*;
 import java.util.Properties;
 import global.users.User;
+import global.UI;
 
 public class UserPage extends JFrame {
     private JLabel checkInLabel;
@@ -23,13 +24,15 @@ public class UserPage extends JFrame {
     private JComboBox<String> filterComboBox;
     private JButton checkAvailabilityButton;
     private User user;
+    private UI ui;
 
     Color mainblue = new Color(28,49,94);
     Color nugreen = new Color(34, 124, 112);
     Color beige = new Color(229,225,194);
     Color lightgreen = new Color(136,164,123);
     
-    public UserPage() {
+    public UserPage(UI ui) {
+        this.ui=ui;
         user=User.makeUser("CLIENT");
         setTitle("Renting.com | Not just a website~! Actually not a website at all, even!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -172,7 +175,7 @@ public class UserPage extends JFrame {
 
         //and another listener for the reservations button
         reserveBtn.addActionListener(e ->{
-            new ReserveRoom();
+            new ReserveRoom(ui);
         });
 
         setVisible(true);
@@ -180,7 +183,11 @@ public class UserPage extends JFrame {
 
 
     
-    public static void main(String[] args) {
-        new UserPage();
+    /**public static void main(String[] args) {
+        new UserPage(ui);
+    }*/
+
+    public void run(){
+        new UserPage(ui);
     }
 }

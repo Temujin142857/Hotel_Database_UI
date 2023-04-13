@@ -9,17 +9,19 @@ import java.util.Scanner;
 import global.*;
 import global.users.User;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.ls.LSOutput;
 
 //is it better to make one connection that stays open the entire time database is valid
 //or open a new on every time a command needs to be sent? that seems secure but slow
 
 
 public class Database {
-    private final String[] sections= new String[]{"Constructors:"};
+    private final String[] sections= new String[]{"Constructors:","Inserts to run on first time setup:"};
     private final String[] zones=new    String[]{"placeholder"};
     private Connection conn;//protecting it from garbage collection, maybe unnecisary
     private Statement st;
     private GuardDog goodBoy;
+    private final String urlPart1="jdbc:postgresql://localhost:5432/";
 
 
     public Database(String databaseName, String user, String password) throws SQLException {
@@ -27,15 +29,16 @@ public class Database {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
+            System.out.println("seems like the classpath to access postgres is not properly set up");
+            System.out.println("there are instructions on the lab for how to set it up");
             e.printStackTrace();
         }
-        String url="jdbc:postgresql://localhost:5432/"+databaseName;
+        String url=urlPart1+databaseName;
         conn = DriverManager.getConnection(url, user, password);
 
         try {
             st = conn.createStatement();
         } catch (SQLException e) {
-            System.out.println("if you're reading this we're screwed cause idk why this would throw and error");
             e.printStackTrace();
         }
     }

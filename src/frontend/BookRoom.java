@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.jdatepicker.impl.*;
 import java.util.Properties;
+import global.UI;
 
 public class BookRoom extends JFrame{
     private String SIN;
@@ -24,6 +25,7 @@ public class BookRoom extends JFrame{
     private JTextField userSINField;
     private JTextField roomIDField;
     private JButton roomConfirmBtn;
+    private UI ui;
     
     
 
@@ -33,7 +35,8 @@ public class BookRoom extends JFrame{
     Color beige = new Color(229,225,194);
     Color lightgreen = new Color(136,164,123);
 
-    public BookRoom(){
+    public BookRoom(UI ui){
+        this.ui=ui;
         setTitle("Renting.com | Create a Booking (Employee)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

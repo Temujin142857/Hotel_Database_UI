@@ -4,6 +4,7 @@ import javax.swing.*;
 import org.jdatepicker.impl.*;
 import java.awt.*;
 import java.util.Properties;
+import global.UI;
 
 public class EmployeePage extends JFrame{
     private JLabel checkInLabel;
@@ -20,13 +21,15 @@ public class EmployeePage extends JFrame{
     private JComboBox<String> classComboBox;
     private JButton checkAvailabilityButton;
     private JButton bookRoomButton;
+    private UI ui;
 
     Color mainblue = new Color(28,49,94);
     Color nugreen = new Color(34, 124, 112);
     Color beige = new Color(229,225,194);
     Color lightgreen = new Color(136,164,123);
 
-    public EmployeePage(){
+    public EmployeePage(UI ui){
+        this.ui=ui;
         setTitle("Renting.com | (Employee Window)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(beige);
@@ -143,19 +146,23 @@ public class EmployeePage extends JFrame{
         pack();
 
         bookRoomButton.addActionListener(e ->{
-            new BookRoom();
+            new BookRoom(ui);
         });
 
         reservConvertBtn.addActionListener(e ->{
-            new ConvertReservation();
+            new ConvertReservation(ui);
         });
 
 
 
         setVisible(true);
     }
-    public static void main(String[] args) {
-        new EmployeePage();
+    /**public static void main(String[] args) {
+        new EmployeePage(ui);
+    }*/
+
+    public void run(){
+        new EmployeePage(ui);
     }
     
 }
