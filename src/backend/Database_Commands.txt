@@ -77,16 +77,23 @@ CREATE OR REPLACE TRIGGER sync_reservation_rental_update
 
 
 //Indexes:
+//most people will find the hotel they want to stay at, then just pick an arbitrary room of the right size
+//this index speeds up our ability to search for rooms based on the hotel they belong to
 CREATE INDEX IF NOT EXISTS room_by_hotel
     ON "DBproject"."Chambre" USING hash
     (ID_hotel COLLATE pg_catalog."default")
     TABLESPACE pg_default;
 
+//When planning a vacation most people will decide on a date or time frame first, then consider their options
+//for hotels, so this index speeds up our ability to search for rentals based on the date
+//*Location is the french for rental, we wrote most of this in french then ran out of time so switched to fast english
 CREATE INDEX IF NOT EXISTS rental_by_date
 ON "DBproject"."Location" USING btree
 (date_start ASC NULLS LAST,date_end ASC NULLS LAST)
 TABLESPACE pg_default;
 
+//when we're trying to see if a room is booked or not already, we'll be making a request for rentals based on which room
+//they're associated with, so this index will speed up that search
 CREATE INDEX IF NOT EXISTS rental_by_room
 ON "DBproject"."Location" USING hash
     ("ID_chambre" COLLATE pg_catalog."default")
